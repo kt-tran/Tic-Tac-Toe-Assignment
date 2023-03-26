@@ -18,8 +18,6 @@ namespace Tic_Tac_Toe_Assignment
         }
     }
 
-    //all classes are internal by default but this is explicitly written for clarity
-
     internal class UserInterface
     {
         //implement switching game modes later
@@ -50,7 +48,7 @@ namespace Tic_Tac_Toe_Assignment
         }
         public string updateScreen()
         {
-            return currentGame.Gameboard.ToString();
+            return currentGame.gameboard.ToString();
         }
         
 
@@ -100,6 +98,7 @@ namespace Tic_Tac_Toe_Assignment
         private int playersCount;
         private string rules;
         private char[] piece;
+        public Gameboard gameboard;
 
         //properties
 
@@ -138,7 +137,7 @@ namespace Tic_Tac_Toe_Assignment
         //methods
         public override void initializeGame()
         {
-            Gameboard gameboard = new Gameboard();
+            gameboard = new Gameboard();
         }
 
         bool validateMove(int x, int y, char piece)
