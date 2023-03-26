@@ -1,6 +1,7 @@
 ﻿// IFN563 Assignment
 // Created by Katie Tran - n11159243
 using System;
+using System.ComponentModel;
 using System.Data;
 using static System.Console;
 
@@ -51,6 +52,18 @@ namespace Tic_Tac_Toe_Assignment
             return currentGame.gameboard.ToString();
         }
         
+        public void getInput()
+        {
+            string input = ReadLine();
+            if (input == "help")
+            {
+                helpSystem.printCommands();
+            }
+            else
+            {
+                validateMove();
+            }
+        }
 
         //constructor - currently using default constructor
     }
@@ -99,24 +112,26 @@ namespace Tic_Tac_Toe_Assignment
         private string rules;
         private char[] piece;
         public Gameboard gameboard;
+        public UserInterface userInterface;
+        public HelpSystem helpSystem;
 
         //properties
 
         //methods
         public abstract void initializeGame();
-        
-
-        /*
-         * mainGame()
+        public abstract void makeMove(int playerID);
+        public void mainGame(int playersCount)
         {   bool gameEnd = false;
             bool playerQuit = false;
 
-            while (!gameEnd)
+            this.playersCount = playersCount;
+            int i = 0;
+            while (!gameEnd & !playerQuit)
             {
-                updateboard?
+                makeMove(i);
+                i = (i + 1) % playersCount;
             }
         }
-        */
 
         //constructor
     }
@@ -138,6 +153,11 @@ namespace Tic_Tac_Toe_Assignment
         public override void initializeGame()
         {
             gameboard = new Gameboard();
+            helpSystem = new HelpSystem();
+        }
+        public override void makeMove(int playerID)
+        {
+
         }
 
         bool validateMove(int x, int y, char piece)
@@ -153,7 +173,8 @@ namespace Tic_Tac_Toe_Assignment
             {
                 if(piece == pieces[i])
                 {
-                    spareMove = true;
+                    if (gameboard.Board[x, y] == 0)
+                        spareMove = true;
                 }
             }
 
@@ -194,7 +215,7 @@ namespace Tic_Tac_Toe_Assignment
         }
 
         //methods
-        string printCommands()
+        public string printCommands()
         {
             return AvailableCommands;
         }
