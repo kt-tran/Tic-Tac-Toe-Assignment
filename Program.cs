@@ -12,10 +12,8 @@ namespace Tic_Tac_Toe_Assignment
         {
             UserInterface UI = new UserInterface();
             WriteLine(UI.WelcomeMessage);
-
-            Gameboard gameboard = new Gameboard();
-            gameboard.createBoard();
-            WriteLine(gameboard.ToString());
+            UI.startGame();
+            WriteLine(UI.updateScreen());
 
         }
     }
@@ -24,6 +22,9 @@ namespace Tic_Tac_Toe_Assignment
 
     internal class UserInterface
     {
+        //implement switching game modes later
+        Game currentGame = new NumericalTicTacToe();
+
         //fields
         private string welcomeMessage = "Welcome to the Tic-Tac-Toe game!\n" + 
             "Created by Katie Tran.\n" +
@@ -42,6 +43,15 @@ namespace Tic_Tac_Toe_Assignment
         }
 
         //methods
+
+        public void startGame() 
+        {
+            currentGame.initializeGame();
+        }
+        public string updateScreen()
+        {
+            return currentGame.gameboard.ToString();
+        }
         
 
         //constructor - currently using default constructor
@@ -81,18 +91,14 @@ namespace Tic_Tac_Toe_Assignment
 
     }
 
-    interface IGame
+    abstract class Game
     {
-        //an interface cannot have fields
+        public Gameboard gameboard = new Gameboard();
         //properties
 
         //methods
-        /*
-         * void initializeGame()
-        {
-            return createBoard();
-        }
-        */
+        public abstract void initializeGame();
+        
 
         /*
          * mainGame()
@@ -109,7 +115,7 @@ namespace Tic_Tac_Toe_Assignment
         //constructor
     }
 
-    internal class NumericalTicTacToe : IGame
+    internal class NumericalTicTacToe : Game
     {
         //fields
         int playersCount = 2;
@@ -118,6 +124,10 @@ namespace Tic_Tac_Toe_Assignment
         //properties
 
         //methods
+        public override void initializeGame()
+        {
+            gameboard.createBoard();
+        }
 
         //constructor
     }
