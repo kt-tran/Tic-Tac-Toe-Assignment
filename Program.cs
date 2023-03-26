@@ -50,7 +50,7 @@ namespace Tic_Tac_Toe_Assignment
         }
         public string updateScreen()
         {
-            return currentGame.gameboard.ToString();
+            return currentGame.Gameboard.ToString();
         }
         
 
@@ -64,14 +64,12 @@ namespace Tic_Tac_Toe_Assignment
         private int[,] board;
 
         //properties
-
-        //methods
-        public int[,] createBoard()
-        {
-            board = new int [,] { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
-            return board;
+        public int[,] Board 
+        { 
+            get { return board; } 
         }
 
+        //methods
         public override string ToString()
         {
             string printableBoard = "\n";
@@ -88,12 +86,21 @@ namespace Tic_Tac_Toe_Assignment
             return printableBoard;
         }
         //constructor
+        public Gameboard()
+        {
+            board = new int[,] { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
+        }
+
 
     }
 
     abstract class Game
     {
-        public Gameboard gameboard = new Gameboard();
+        //fields
+        private int playersCount;
+        private string rules;
+        private char[] piece;
+
         //properties
 
         //methods
@@ -118,16 +125,87 @@ namespace Tic_Tac_Toe_Assignment
     internal class NumericalTicTacToe : Game
     {
         //fields
+        string rules = "Numerical Tic Tac Toe is a variation of the classic Tic-Tac-Toe game.\n" +
+            "Two players take turns placing the numbers 1 to 9 on a 3x3 board. The first player plays with the odd numbers, the second player plays with the even numbers.\n" +
+            "All numbers can be used only once.\n" +
+            "The player who first puts down exactly 15 points in a line (sum of a horizontal, vertical, or diagonal row of three numbers) wins the game.";
         int playersCount = 2;
-        char[] piece;
+        char[] pieces = { '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+        int playerID; //player 1 (odd) is number 0. player 2 (even) is 1.
 
         //properties
 
         //methods
         public override void initializeGame()
         {
-            gameboard.createBoard();
+            Gameboard gameboard = new Gameboard();
         }
+
+        bool validateMove(int x, int y, char piece)
+        {
+            bool playerMatch = false;
+            string Piece = piece.ToString();
+
+            bool isItAnInteger = int.TryParse(Piece, out int intPiece);
+            playerMatch = (playerID + 1 == intPiece % 2);
+
+            bool spareMove = false;
+            for (int i =  0; i < pieces.Length; i++)
+            {
+                if(piece == pieces[i])
+                {
+                    spareMove = true;
+                }
+            }
+
+            if (isItAnInteger & playerMatch & spareMove)
+            {
+                return true;
+            }
+            else { return  false; }
+        }
+
+        //constructor
+    }
+
+    internal class History
+    {
+        //fields
+
+        //properties
+
+        //methods
+
+        //constructor
+    }
+
+    internal class HelpSystem
+    {
+        //fields
+        private string availableCommands = "This is the Help System.\n" +
+            "Enter 'rules' to see the rules of the game you're currently playing.\n" +
+            "Enter 'undo' to undo a move.\n" +
+            "Enter 'redo' to redo a move you previously undid.\n" +
+            "Enter 'help' for more assistance.";
+
+        //properties
+        public string AvailableCommands
+        {
+            get { return availableCommands; }
+        }
+
+        //methods
+        string printCommands()
+        {
+            return AvailableCommands;
+        }
+
+        /*
+         * string printRulesHelp()
+        {
+
+        }
+        */
 
         //constructor
     }
