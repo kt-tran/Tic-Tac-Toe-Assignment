@@ -1,8 +1,6 @@
 ﻿// IFN563 Assignment
 // Created by Katie Tran - n11159243
 using System;
-using System.ComponentModel;
-using System.Data;
 using static System.Console;
 
 namespace Tic_Tac_Toe_Assignment
@@ -12,59 +10,165 @@ namespace Tic_Tac_Toe_Assignment
         static void Main()
         {
             UserInterface UI = new UserInterface();
-            WriteLine(UI.WelcomeMessage);
-            UI.startGame();
-            WriteLine(UI.updateScreen());
-
+            UI.startApp();
+            UI.mainApp();
         }
     }
 
     internal class UserInterface
     {
         //implement switching game modes later
-        Game currentGame = new NumericalTicTacToe();
+        private Game currentGame;
 
         //fields
-        private string welcomeMessage = "Welcome to the Tic-Tac-Toe game!\n" + 
-            "Created by Katie Tran.\n" +
+        private const string WELCOME_MESSAGE = "Welcome to the game application!\n" +
+            "You can enter 'QUIT' to exit at any time.\n" +
             "Enjoy :)";
-        private string invalidMove = "That was an invalid move. Try again, or type 'help' for more assistance.";
+        private const string PICK_GAME = "What game would you like to play?\n" +
+            "1) Numerical Tic-Tac-Toe\n" +
+            "2) Wild Tic-Tac-Toe\n";
+        private const string MENU_MESSAGE = "Enter:\n" +
+            "1) 'place' to make a move,\n" +
+            "2) 'help' for assistance, or\n" +
+            "3) 'QUIT' to exit.\n" +
+            "Your input:";
+        private const string INVALID_MOVE = "That was an invalid input. Try again, or type '" + HELP + "' for more assistance.";
+        private const string LEAVE_GAME = "The game is over now. Goodbye!";
+        private const string QUIT = "QUIT";
+        private const string HELP = "help";
+        private const string REQUEST_MOVE = "place";
 
         //properties
-        public string WelcomeMessage
-        {
-            get { return welcomeMessage; }
-        }
-
-        public string InvalidMove
-        {
-            get { return invalidMove; }
-        }
 
         //methods
-
-        public void startGame() 
+        public void startApp()
         {
-            currentGame.initializeGame();
+            WriteLine(WELCOME_MESSAGE);
+
+            bool validPick = false;
+            while (!validPick)
+            {
+                WriteLine(PICK_GAME);
+                string pickInput = ReadLine();
+                int choice;
+                validPick = int.TryParse(pickInput, out choice);
+                if (validPick)
+                {
+                    if (choice == 1)
+                    {
+                        currentGame = new NumericalTicTacToe();
+                        WriteLine(currentGame.Rules);
+                    }
+                    else if (choice == 2)
+                    {
+                        WriteLine("That game is currently not supported at the moment. Please try a different game.\n");
+                        validPick = false;
+                        continue;
+                    }
+                    else
+                    {
+                        WriteLine(INVALID_MOVE);
+                        validPick = false;
+                        continue;
+                    }
+                }
+                else
+                {
+                    if (pickInput == HELP)
+                    {
+                        //call help system
+                        validPick = true; //TODO
+                    }
+                    else if (pickInput == QUIT)
+                    {
+                        Environment.Exit(0);
+                    }
+                    else
+                    {
+                        WriteLine(INVALID_MOVE);
+                    }
+
+                }
+            }
+        }
+
+        public void mainApp()
+        {
+            string validatedInput = menu();
+            bool playerQuit = false;
+
+            while (!playerQuit)
+            {
+                if (validatedInput == QUIT)
+                {
+                    playerQuit = true;
+                    Environment.Exit(0);
+                }
+                if (validatedInput == HELP)
+                {
+                    //helpSystem.printCommands(); 
+                }
+                if (validatedInput == REQUEST_MOVE)
+                {
+                    currentGame.gameRound();
+                    updateScreen();
+                }
+
+            }
+
+            WriteLine(LEAVE_GAME);
         }
         public string updateScreen()
         {
             return currentGame.gameboard.ToString();
         }
-        
-        public void getInput()
+
+        public int pickGame(string input)
         {
-            string input = ReadLine();
-            if (input == "help")
+            bool validInput = false;
+            int choice;
+
+            validInput = int.TryParse(input, out choice);
+            if (validInput && (choice == 1 || choice == 2)) 
             {
-                helpSystem.printCommands();
+                return choice;
             }
             else
             {
-                validateMove();
+                if (input == HELP)
+                {
+                    return 3;
+                }
+                if (input == QUIT)
+                {
+                    return 4;
+                }
+                
+                return 0;
             }
         }
+        public string menu() //eventually implement undo & redo
+        {
+            while (true)
+            {
+                Write(MENU_MESSAGE);
+                string input = ReadLine();
+                switch (input)
+                {
+                    case QUIT:
+                        return QUIT;
+                    case HELP:
+                        return HELP;
+                    case REQUEST_MOVE:
+                        return REQUEST_MOVE;
+                    default:
+                        WriteLine(INVALID_MOVE);
+                        break;
 
+                }
+            }
+
+        }
         //constructor - currently using default constructor
     }
 
@@ -77,10 +181,15 @@ namespace Tic_Tac_Toe_Assignment
         //properties
         public int[,] Board 
         { 
-            get { return board; } 
+            get { return board; }
         }
 
         //methods
+        public void placePiece(int x, int y, int piece)
+        {
+            board[x, y] = piece;
+        }
+
         public override string ToString()
         {
             string printableBoard = "\n";
@@ -96,10 +205,11 @@ namespace Tic_Tac_Toe_Assignment
             }
             return printableBoard;
         }
+
         //constructor
-        public Gameboard()
+        public Gameboard(int x, int y)
         {
-            board = new int[,] { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
+            board = new int[x,y];
         }
 
 
@@ -108,28 +218,36 @@ namespace Tic_Tac_Toe_Assignment
     abstract class Game
     {
         //fields
-        private int playersCount;
-        private string rules;
         private char[] piece;
+        private bool gameOver = false;
+        private int currentPlayerID;
         public Gameboard gameboard;
-        public UserInterface userInterface;
         public HelpSystem helpSystem;
 
         //properties
+        public int CurrentPlayerID
+        {
+            get { return currentPlayerID; }
+            set { currentPlayerID = value; }
+        }
+        public abstract string Rules
+        {
+            get;
+        }
+
+        public abstract int PlayersCount
+        {
+            get;
+        }
 
         //methods
-        public abstract void initializeGame();
-        public abstract void makeMove(int playerID);
-        public void mainGame(int playersCount)
-        {   bool gameEnd = false;
-            bool playerQuit = false;
-
-            this.playersCount = playersCount;
-            int i = 0;
-            while (!gameEnd & !playerQuit)
+        public abstract void makeMove();
+        public void gameRound()
+        {   
+            if (!gameOver)
             {
-                makeMove(i);
-                i = (i + 1) % playersCount;
+                makeMove();
+                CurrentPlayerID = (CurrentPlayerID + 1) % PlayersCount;
             }
         }
 
@@ -139,53 +257,151 @@ namespace Tic_Tac_Toe_Assignment
     internal class NumericalTicTacToe : Game
     {
         //fields
-        string rules = "Numerical Tic Tac Toe is a variation of the classic Tic-Tac-Toe game.\n" +
-            "Two players take turns placing the numbers 1 to 9 on a 3x3 board. The first player plays with the odd numbers, the second player plays with the even numbers.\n" +
-            "All numbers can be used only once.\n" +
-            "The player who first puts down exactly 15 points in a line (sum of a horizontal, vertical, or diagonal row of three numbers) wins the game.";
+        //CONSIDER CHANGING TO CONST
         int playersCount = 2;
         char[] pieces = { '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-        int playerID; //player 1 (odd) is number 0. player 2 (even) is 1.
+        int HeightOfGameboard = 3;
+        int WidthOfGameboard = 3;
+        
 
         //properties
+        public override string Rules
+        {
+            get
+            {
+                return "Numerical Tic Tac Toe is a variation of the classic Tic-Tac-Toe game.\n\n" +
+                        "  1. Two players take turns placing the numbers 1 to 9 on a 3x3 board.\n" + 
+                        "  2. The first player plays with the odd numbers, the second player plays with the even numbers.\n" +
+                        "  3. All numbers can be used only once.\n\n" +
+                        "The player who first puts down exactly 15 points in a line\n" +
+                        "(sum of a horizontal, vertical, or diagonal row of three numbers) " +
+                        "wins the game.\n";
+            }
+        }
+
+        public override int PlayersCount
+        {
+            get { return playersCount; }
+        }
 
         //methods
-        public override void initializeGame()
-        {
-            gameboard = new Gameboard();
-            helpSystem = new HelpSystem();
-        }
-        public override void makeMove(int playerID)
-        {
-
-        }
 
         bool validateMove(int x, int y, char piece)
         {
             bool playerMatch = false;
-            string Piece = piece.ToString();
-
-            bool isItAnInteger = int.TryParse(Piece, out int intPiece);
-            playerMatch = (playerID + 1 == intPiece % 2);
+            playerMatch = (CurrentPlayerID == piece % 2); //player 1 (odd) is number 1. player 2 (even) is 0
 
             bool spareMove = false;
             for (int i =  0; i < pieces.Length; i++)
             {
-                if(piece == pieces[i])
+                if(piece == pieces[i]) //if that piece has not been used yet
                 {
-                    if (gameboard.Board[x, y] == 0)
+                    if (gameboard.Board[x, y] == 0) //if that cell on the gameboard is empty
+                    {
                         spareMove = true;
+                        pieces[i] = '0';
+                    }
+                    
                 }
             }
 
-            if (isItAnInteger & playerMatch & spareMove)
+            if (playerMatch & spareMove)
             {
                 return true;
             }
             else { return  false; }
         }
 
+        public override void makeMove()
+        {
+            bool withinGrid = false;
+            bool isXAnInt = false;
+            bool isYAnInt = false;
+            bool isPieceAnInt = false;
+
+            int xAsInt = -1;
+            int yAsInt = -1;
+            int intPiece = -1;
+            char pieceAsChar = '?';
+
+            while (!withinGrid || !isXAnInt)
+            {
+                Write("Enter the row of your move:");
+                string xAsString = ReadLine();
+                isXAnInt = int.TryParse(xAsString, out xAsInt);
+
+                if (!isXAnInt)
+                {
+                    WriteLine("That was not an integer. Please try again.");
+                    continue;
+                }
+
+                if (xAsInt > WidthOfGameboard || xAsInt < 1)
+                {
+                    WriteLine("That is outside of the board. Please try again.");
+                    continue;
+                }
+                withinGrid = true;
+            }
+
+            withinGrid = false;
+            while (!withinGrid || !isYAnInt)
+            {
+                Write("Enter the column of your move:");
+                string yAsString = ReadLine();
+                isYAnInt = int.TryParse(yAsString, out yAsInt);
+
+                if (!isYAnInt)
+                {
+                    WriteLine("That was not an integer. Please try again.");
+                    continue;
+                }
+
+                if (yAsInt > HeightOfGameboard || yAsInt < 1)
+                {
+                    WriteLine("That is outside of the board. Please try again.");
+                    continue;
+                }
+                withinGrid = true;
+            }
+
+            while (!isPieceAnInt)
+            {
+                Write("Enter the number you wish to place:");
+                string pieceAsString = ReadLine();
+                isPieceAnInt = int.TryParse(pieceAsString, out intPiece);
+                if (!isPieceAnInt)
+                {
+                    WriteLine("That was not a number between 1 and 9 (inclusive). Please try again.");
+                    continue;
+                }
+
+                pieceAsChar = (char)intPiece;
+            }
+
+            bool validMove = false;
+            validMove = validateMove(xAsInt, yAsInt, pieceAsChar);
+            if (!validMove)
+            {
+                WriteLine("That was not a valid move. Either that move has been used, you cannot use that piece or that cell on the gameboard is taken." +
+                    "Please try again.");
+            }
+            else
+            {
+                gameboard.placePiece(xAsInt, yAsInt, pieceAsChar);
+            }
+
+            
+         }
+
+
         //constructor
+        public NumericalTicTacToe()
+        {
+            gameboard = new Gameboard(HeightOfGameboard, WidthOfGameboard);
+            helpSystem = new HelpSystem();
+            CurrentPlayerID = 1;
+        }
     }
 
     internal class History
