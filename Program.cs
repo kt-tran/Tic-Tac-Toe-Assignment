@@ -110,6 +110,7 @@ namespace Tic_Tac_Toe_Assignment
                 }
                 if (validatedInput == REQUEST_MOVE)
                 {
+                    updateScreen();
                     currentGame.gameRound();
                     updateScreen();
                 }
@@ -120,33 +121,10 @@ namespace Tic_Tac_Toe_Assignment
         }
         public string updateScreen()
         {
+            WriteLine(currentGame.gameboard);
             return currentGame.gameboard.ToString();
         }
-
-        public int pickGame(string input)
-        {
-            bool validInput = false;
-            int choice;
-
-            validInput = int.TryParse(input, out choice);
-            if (validInput && (choice == 1 || choice == 2)) 
-            {
-                return choice;
-            }
-            else
-            {
-                if (input == HELP)
-                {
-                    return 3;
-                }
-                if (input == QUIT)
-                {
-                    return 4;
-                }
-                
-                return 0;
-            }
-        }
+        
         public string menu() //eventually implement undo & redo
         {
             while (true)
