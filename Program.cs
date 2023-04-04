@@ -1,6 +1,7 @@
 ﻿// IFN563 Assignment
 // Created by Katie Tran - n11159243
 using System;
+using System.Text.Json.Serialization;
 using static System.Console;
 
 namespace Tic_Tac_Toe_Assignment
@@ -21,24 +22,32 @@ namespace Tic_Tac_Toe_Assignment
         private Game currentGame;
 
         //fields
-        private const string WELCOME_MESSAGE = "Welcome to the game application!\n" +
+        private const string WELCOME_MESSAGE = "++++++++++++++++++++++++++++++++++++++++++++++\n" +
+            "Welcome to Katie Tran's game application!\n" +
             "You can enter 'QUIT' to exit at any time.\n" +
-            "Enjoy :)";
+            "Enjoy :)\n" +
+            "++++++++++++++++++++++++++++++++++++++++++++++\n";
         private const string PICK_GAME = "What game would you like to play?\n" +
             "1) Numerical Tic-Tac-Toe\n" +
-            "2) Wild Tic-Tac-Toe\n";
-        private const string MENU_MESSAGE = "Enter:\n" +
-            "1) 'place' to make a move,\n" +
-            "2) 'help' for assistance, or\n" +
-            "3) 'QUIT' to exit.\n" +
+            "2) Wild Tic-Tac-Toe\n\n" +
+            "I would like to play:";
+        private const string MENU_MESSAGE = "Please enter:\n" +
+            "- 'place' to make a move,\n" +
+            "- 'help' for assistance, or\n" +
+            "- 'QUIT' to exit.\n\n" +
             "Your input:";
-        private const string INVALID_MOVE = "That was an invalid input. Try again, or type '" + HELP + "' for more assistance.";
+        private const string INVALID_MOVE = "That was an invalid input. Try again, or type '" + HELP + "' for more assistance.\n";
         private const string LEAVE_GAME = "The game is over now. Goodbye!";
         private const string QUIT = "QUIT";
         private const string HELP = "help";
         private const string REQUEST_MOVE = "place";
+        private int turnCounter = 0;
 
         //properties
+        public int TurnCounter
+        {
+            get; set;
+        }
 
         //methods
         public void startApp()
@@ -48,7 +57,7 @@ namespace Tic_Tac_Toe_Assignment
             bool validPick = false;
             while (!validPick)
             {
-                WriteLine(PICK_GAME);
+                Write(PICK_GAME);
                 string pickInput = ReadLine();
                 int choice;
                 validPick = int.TryParse(pickInput, out choice);
@@ -94,14 +103,17 @@ namespace Tic_Tac_Toe_Assignment
 
         public void mainApp()
         {
-            string validatedInput = menu();
+            string validatedInput = "";
             bool playerQuit = false;
+            bool gameIsOver = false;
 
             while (!playerQuit)
             {
+                validatedInput = menu();
                 if (validatedInput == QUIT)
                 {
                     playerQuit = true;
+                    WriteLine(LEAVE_GAME);
                     Environment.Exit(0);
                 }
                 if (validatedInput == HELP)
@@ -111,13 +123,28 @@ namespace Tic_Tac_Toe_Assignment
                 if (validatedInput == REQUEST_MOVE)
                 {
                     updateScreen();
-                    currentGame.gameRound();
+                    WriteLine("The number of turns that have been made are: {0}", TurnCounter);
+                    TurnCounter += 1;
+                    gameIsOver = currentGame.gameRound();
+                    if (gameIsOver)
+                    {
+                        updateScreen();
+                        switch (currentGame.CurrentPlayerID) //allows modularity for games with more than 2 players in future
+                        {
+                            case 0:
+                                WriteLine("The winner is player 2. Congratulations!"); //because player 2 is stored as 0 in CurrentPlayerID
+                                break;
+                            case 1:
+                                WriteLine("The winner is player 1. Congratulations!");
+                                break;
+                        }
+                        WriteLine(LEAVE_GAME);
+                        Environment.Exit(0);
+                    }
                     updateScreen();
                 }
 
             }
-
-            WriteLine(LEAVE_GAME);
         }
         public string updateScreen()
         {
@@ -154,16 +181,16 @@ namespace Tic_Tac_Toe_Assignment
     {
         //fields
         //consider making the data type more extensible, e.g. if this was chess then the board needs to accept those pieces
-        private int[,] board;
+        private string[,] board;
 
         //properties
-        public int[,] Board 
+        public string[,] Board 
         { 
             get { return board; }
         }
 
         //methods
-        public void placePiece(int x, int y, int piece)
+        public void placePiece(int x, int y, string piece)
         {
             board[x, y] = piece;
         }
@@ -187,7 +214,15 @@ namespace Tic_Tac_Toe_Assignment
         //constructor
         public Gameboard(int x, int y)
         {
-            board = new int[x,y];
+            board = new string[x,y];
+            for (int i = 0;i < board.GetLength(0);i++)
+            {
+                for (int j = 0;j < board.GetLength(1);j++)
+                {
+                    board[i,j] = "0";
+                }
+                
+            }
         }
 
 
@@ -196,13 +231,16 @@ namespace Tic_Tac_Toe_Assignment
     abstract class Game
     {
         //fields
-        private char[] piece;
         private bool gameOver = false;
         private int currentPlayerID;
         public Gameboard gameboard;
         public HelpSystem helpSystem;
 
         //properties
+        public abstract string[] Pieces
+        {
+            get; set;
+        }
         public int CurrentPlayerID
         {
             get { return currentPlayerID; }
@@ -219,14 +257,26 @@ namespace Tic_Tac_Toe_Assignment
         }
 
         //methods
-        public abstract void makeMove();
-        public void gameRound()
-        {   
+        public abstract bool makeMove();
+
+        public abstract bool isGameOver();
+        public bool gameRound()
+        {
+           
+            bool turnComplete = false;
+            while (!turnComplete)
+            {
+                turnComplete = makeMove();
+            }
+            gameOver = isGameOver();
             if (!gameOver)
             {
-                makeMove();
                 CurrentPlayerID = (CurrentPlayerID + 1) % PlayersCount;
+                return gameOver;
             }
+            else
+                return gameOver = true;
+            
         }
 
         //constructor
@@ -236,24 +286,44 @@ namespace Tic_Tac_Toe_Assignment
     {
         //fields
         //CONSIDER CHANGING TO CONST
-        int playersCount = 2;
-        char[] pieces = { '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-        int HeightOfGameboard = 3;
-        int WidthOfGameboard = 3;
-        
+        private int playersCount = 2;
+        private int HeightOfGameboard = 3;
+        private int WidthOfGameboard = 3;
+        private const int WIN_TOTAL = 15;
+        private string[] NTTpieces = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+
 
         //properties
+        public override string[] Pieces
+        {
+            get
+            {
+                return NTTpieces;
+            }
+            set
+            {
+                NTTpieces = value;
+            }
+        }
+
         public override string Rules
         {
             get
             {
-                return "Numerical Tic Tac Toe is a variation of the classic Tic-Tac-Toe game.\n\n" +
+                return "\nNumerical Tic Tac Toe is a variation of the classic Tic-Tac-Toe game.\n\n" +
                         "  1. Two players take turns placing the numbers 1 to 9 on a 3x3 board.\n" + 
                         "  2. The first player plays with the odd numbers, the second player plays with the even numbers.\n" +
                         "  3. All numbers can be used only once.\n\n" +
                         "The player who first puts down exactly 15 points in a line\n" +
                         "(sum of a horizontal, vertical, or diagonal row of three numbers) " +
-                        "wins the game.\n";
+                        "wins the game.\n" +
+                        "\n" + 
+                        "You can make a turn on the board using the row number and column number.\n" +
+                        "For example, the number 7 has been placed on row 2, column 3.\n" +
+                        "\n" +
+                        "          column\n" +
+                        "          1 2 3\r\n  row 1  |0|0|0|\r\n  row 2  |0|0|7|\r\n  row 3  |0|0|0|" +
+                        "\n";
             }
         }
 
@@ -264,20 +334,21 @@ namespace Tic_Tac_Toe_Assignment
 
         //methods
 
-        bool validateMove(int x, int y, char piece)
+        private bool validateMove(int x, int y, string piece)
         {
             bool playerMatch = false;
-            playerMatch = (CurrentPlayerID == piece % 2); //player 1 (odd) is number 1. player 2 (even) is 0
+            int intPiece2 = int.Parse(piece);
+            playerMatch = (CurrentPlayerID == intPiece2 % 2); //player 1 (odd) is number 1. player 2 (even) is 0
 
             bool spareMove = false;
-            for (int i =  0; i < pieces.Length; i++)
+            for (int i =  0; i < Pieces.Length; i++)
             {
-                if(piece == pieces[i]) //if that piece has not been used yet
+                if(piece == Pieces[i]) //if that piece has not been used yet
                 {
-                    if (gameboard.Board[x, y] == 0) //if that cell on the gameboard is empty
+                    if (gameboard.Board[x, y] == "0") //if that cell on the gameboard is empty
                     {
                         spareMove = true;
-                        pieces[i] = '0';
+                        Pieces[i] = "0";
                     }
                     
                 }
@@ -290,8 +361,9 @@ namespace Tic_Tac_Toe_Assignment
             else { return  false; }
         }
 
-        public override void makeMove()
+        public override bool makeMove()
         {
+            bool turnSuccess = false;
             bool withinGrid = false;
             bool isXAnInt = false;
             bool isYAnInt = false;
@@ -301,6 +373,17 @@ namespace Tic_Tac_Toe_Assignment
             int yAsInt = -1;
             int intPiece = -1;
             char pieceAsChar = '?';
+            string pieceAsString = "";
+
+            switch(CurrentPlayerID) //allows modularity for games with more than 2 players in future
+            {
+                case 0:
+                    Write("It's Player 2's turn.\n\n"); //because player 2 is stored as 0 in CurrentPlayerID
+                    break;
+                case 1:
+                    Write("It's Player 1's turn.\n\n");
+                    break;
+            }
 
             while (!withinGrid || !isXAnInt)
             {
@@ -319,6 +402,7 @@ namespace Tic_Tac_Toe_Assignment
                     WriteLine("That is outside of the board. Please try again.");
                     continue;
                 }
+                xAsInt -= 1;
                 withinGrid = true;
             }
 
@@ -340,38 +424,88 @@ namespace Tic_Tac_Toe_Assignment
                     WriteLine("That is outside of the board. Please try again.");
                     continue;
                 }
+                yAsInt -= 1;
                 withinGrid = true;
             }
 
             while (!isPieceAnInt)
             {
                 Write("Enter the number you wish to place:");
-                string pieceAsString = ReadLine();
+                pieceAsString = ReadLine();
                 isPieceAnInt = int.TryParse(pieceAsString, out intPiece);
                 if (!isPieceAnInt)
                 {
                     WriteLine("That was not a number between 1 and 9 (inclusive). Please try again.");
                     continue;
                 }
-
-                pieceAsChar = (char)intPiece;
             }
 
             bool validMove = false;
-            validMove = validateMove(xAsInt, yAsInt, pieceAsChar);
+            validMove = validateMove(xAsInt, yAsInt, pieceAsString);
             if (!validMove)
             {
-                WriteLine("That was not a valid move. Either that move has been used, you cannot use that piece or that cell on the gameboard is taken." +
-                    "Please try again.");
+                WriteLine("That was not a valid move. Either:\n" +
+                    "- that move has been used, or\n" +
+                    "- you cannot use that piece, or\n" +
+                    "- that cell on the gameboard is taken.\n" +
+                    "Please try again.\n");
+                return turnSuccess;
             }
             else
             {
-                gameboard.placePiece(xAsInt, yAsInt, pieceAsChar);
+                gameboard.placePiece(xAsInt, yAsInt, pieceAsString);
+                return turnSuccess = true;
             }
 
             
          }
 
+        public override bool isGameOver()
+        {
+            int total = 0;
+            //check horizontally for a win
+            for (int x = 0; x < gameboard.Board.GetLength(0); x++)
+            {
+                for (int y = 0; y < gameboard.Board.GetLength(1); y++)
+                {
+                    total += int.Parse(gameboard.Board[x, y]);
+                    if (total == 15)
+                        return true;
+                }
+                total = 0; //reset after each row
+            }
+
+            //check vertically for a win
+            for (int y = 0; y < gameboard.Board.GetLength(1); y++)
+            {
+                for (int x = 0; x < gameboard.Board.GetLength(0); x++)
+                {
+                    total += int.Parse(gameboard.Board[x, y]);
+                    if (total == 15)
+                        return true;
+                }
+                total = 0; //reset after each column
+            }
+
+            //check diagonally for a win
+            for (int x = 0, y = 0; x < gameboard.Board.GetLength(0); x++, y++) //checks \ diagonal, from top left to bottom right 
+            {
+                total += int.Parse(gameboard.Board[x, y]);
+                if (total == 15)
+                    return true;
+            }
+            total = 0; //reset before checking the other diagonal direction
+
+            for (int x = 0, y = 2; x < gameboard.Board.GetLength(0); x++, y--) //checks / diagonal, from bottom left to top right
+            {
+                total += int.Parse(gameboard.Board[x, y]);
+                if (total == 15)
+                    return true;
+            }
+
+            //after checking each possible win state
+            return false;
+        }
 
         //constructor
         public NumericalTicTacToe()
