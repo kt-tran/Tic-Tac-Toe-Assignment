@@ -1,8 +1,8 @@
 ﻿// IFN563 Assignment
 // Created by Katie Tran - n11159243
 using System;
-using System.Text.Json.Serialization;
 using static System.Console;
+using System.IO;
 
 namespace Tic_Tac_Toe_Assignment
 {
@@ -31,6 +31,10 @@ namespace Tic_Tac_Toe_Assignment
             "1) Numerical Tic-Tac-Toe\n" +
             "2) Wild Tic-Tac-Toe\n\n" +
             "I would like to play:";
+        private const string HUMAN_OR_COMPUTER = "Which game mode would you like?\n" +
+            "1) Human vs Human\n" +
+            "2) Computer vs Human\n\n" +
+            "I would like to play:";
         private const string MENU_MESSAGE = "Please enter:\n" +
             "- 'place' to make a move,\n" +
             "- 'help' for assistance, or\n" +
@@ -54,6 +58,86 @@ namespace Tic_Tac_Toe_Assignment
         {
             WriteLine(WELCOME_MESSAGE);
 
+            requestGameMode();
+            requestPlayerType();
+        }
+
+        public void mainApp()
+        {
+            string validatedInput = "";
+            bool playerQuit = false;
+            bool gameIsOver = false;
+
+            while (!playerQuit)
+            {
+                validatedInput = menu();
+                if (validatedInput == QUIT)
+                {
+                    playerQuit = true;
+                    WriteLine(LEAVE_GAME);
+                    Environment.Exit(0);
+                }
+                if (validatedInput == HELP)
+                {
+                    //helpSystem.printCommands(); 
+                }
+                if (validatedInput == REQUEST_MOVE)
+                {
+                    updateScreen();
+                    WriteLine("The number of turns that have been made are: {0}", TurnCounter);
+                    TurnCounter += 1;
+                    gameIsOver = currentGame.gameTurn();
+                    if (gameIsOver)
+                    {
+                        updateScreen();
+                        switch (currentGame.CurrentPlayerID) //allows modularity for games with more than 2 players in future
+                        {
+                            case 0:
+                                WriteLine("The winner is player 2. Congratulations!"); //because player 2 is stored as 0 in CurrentPlayerID
+                                break;
+                            case 1:
+                                WriteLine("The winner is player 1. Congratulations!");
+                                break;
+                        }
+                        WriteLine(LEAVE_GAME);
+                        Environment.Exit(0);
+                    }
+                    updateScreen();
+                }
+
+            }
+        }
+        private string updateScreen()
+        {
+            WriteLine(currentGame.gameboard);
+            return currentGame.gameboard.ToString();
+        }
+        
+        private string menu() //eventually implement undo & redo
+        {
+            while (true)
+            {
+                Write(MENU_MESSAGE);
+                string input = ReadLine();
+                switch (input)
+                {
+                    case QUIT:
+                        return QUIT;
+                    case HELP:
+                        return HELP;
+                    case REQUEST_MOVE:
+                        return REQUEST_MOVE;
+                    default:
+                        WriteLine(INVALID_MOVE);
+                        break;
+
+                }
+            }
+
+        }
+
+        private void requestGameMode()
+        {
             bool validPick = false;
             while (!validPick)
             {
@@ -90,6 +174,7 @@ namespace Tic_Tac_Toe_Assignment
                     }
                     else if (pickInput == QUIT)
                     {
+                        WriteLine("Goodbye!");
                         Environment.Exit(0);
                     }
                     else
@@ -101,78 +186,54 @@ namespace Tic_Tac_Toe_Assignment
             }
         }
 
-        public void mainApp()
+        private void requestPlayerType()
         {
-            string validatedInput = "";
-            bool playerQuit = false;
-            bool gameIsOver = false;
-
-            while (!playerQuit)
+            bool validPick = false;
+            while (!validPick)
             {
-                validatedInput = menu();
-                if (validatedInput == QUIT)
+                Write(HUMAN_OR_COMPUTER);
+                string Request = ReadLine();
+                int choice;
+                bool isRequestAnInt = false;
+                isRequestAnInt = int.TryParse(Request, out choice);
+                if (isRequestAnInt)
                 {
-                    playerQuit = true;
-                    WriteLine(LEAVE_GAME);
-                    Environment.Exit(0);
-                }
-                if (validatedInput == HELP)
-                {
-                    //helpSystem.printCommands(); 
-                }
-                if (validatedInput == REQUEST_MOVE)
-                {
-                    updateScreen();
-                    WriteLine("The number of turns that have been made are: {0}", TurnCounter);
-                    TurnCounter += 1;
-                    gameIsOver = currentGame.gameRound();
-                    if (gameIsOver)
+                    if (choice == 1)
                     {
-                        updateScreen();
-                        switch (currentGame.CurrentPlayerID) //allows modularity for games with more than 2 players in future
-                        {
-                            case 0:
-                                WriteLine("The winner is player 2. Congratulations!"); //because player 2 is stored as 0 in CurrentPlayerID
-                                break;
-                            case 1:
-                                WriteLine("The winner is player 1. Congratulations!");
-                                break;
-                        }
-                        WriteLine(LEAVE_GAME);
+                        WriteLine("You picked Human vs Human.\n");
+                        validPick = true;
+                    }
+                    else if (choice == 2)
+                    {
+                        WriteLine("You picked Computer vs Human.\n");
+                        validPick = true;
+                    }
+                    else
+                    {
+                        WriteLine(INVALID_MOVE);
+                        validPick = false;
+                        continue;
+                    }
+                }
+                else
+                {
+                    if (Request == HELP)
+                    {
+                        //call help system
+                        validPick = true; //TODO
+                    }
+                    else if (Request == QUIT)
+                    {
+                        WriteLine("Goodbye!");
                         Environment.Exit(0);
                     }
-                    updateScreen();
-                }
-
-            }
-        }
-        public string updateScreen()
-        {
-            WriteLine(currentGame.gameboard);
-            return currentGame.gameboard.ToString();
-        }
-        
-        public string menu() //eventually implement undo & redo
-        {
-            while (true)
-            {
-                Write(MENU_MESSAGE);
-                string input = ReadLine();
-                switch (input)
-                {
-                    case QUIT:
-                        return QUIT;
-                    case HELP:
-                        return HELP;
-                    case REQUEST_MOVE:
-                        return REQUEST_MOVE;
-                    default:
+                    else
+                    {
                         WriteLine(INVALID_MOVE);
-                        break;
+                    }
 
                 }
             }
-
         }
         //constructor - currently using default constructor
     }
@@ -235,6 +296,7 @@ namespace Tic_Tac_Toe_Assignment
         private int currentPlayerID;
         public Gameboard gameboard;
         public HelpSystem helpSystem;
+        public History logger;
 
         //properties
         public abstract string[] Pieces
@@ -256,11 +318,18 @@ namespace Tic_Tac_Toe_Assignment
             get;
         }
 
+        /*
+        public abstract Player[] PlayerList
+        {
+            get; set;
+        }
+        */
+
         //methods
         public abstract bool makeMove();
 
         public abstract bool isGameOver();
-        public bool gameRound()
+        public bool gameTurn()
         {
            
             bool turnComplete = false;
@@ -268,6 +337,7 @@ namespace Tic_Tac_Toe_Assignment
             {
                 turnComplete = makeMove();
             }
+            logger.Log(outFile, gameboard);
             gameOver = isGameOver();
             if (!gameOver)
             {
@@ -279,16 +349,15 @@ namespace Tic_Tac_Toe_Assignment
             
         }
 
-        //constructor
+        //constructor: TODO implement abstract constructor & have children inherit
     }
 
     internal class NumericalTicTacToe : Game
     {
         //fields
-        //CONSIDER CHANGING TO CONST
-        private int playersCount = 2;
-        private int HeightOfGameboard = 3;
-        private int WidthOfGameboard = 3;
+        private const int PLAYERS_COUNT = 2;
+        private const int HEIGHT_OF_GAMEBOARD = 3;
+        private const int WIDTH_OF_GAMEBOARD = 3;
         private const int WIN_TOTAL = 15;
         private string[] NTTpieces = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
@@ -329,7 +398,7 @@ namespace Tic_Tac_Toe_Assignment
 
         public override int PlayersCount
         {
-            get { return playersCount; }
+            get { return PLAYERS_COUNT; }
         }
 
         //methods
@@ -372,7 +441,6 @@ namespace Tic_Tac_Toe_Assignment
             int xAsInt = -1;
             int yAsInt = -1;
             int intPiece = -1;
-            char pieceAsChar = '?';
             string pieceAsString = "";
 
             switch(CurrentPlayerID) //allows modularity for games with more than 2 players in future
@@ -385,49 +453,7 @@ namespace Tic_Tac_Toe_Assignment
                     break;
             }
 
-            while (!withinGrid || !isXAnInt)
-            {
-                Write("Enter the row of your move:");
-                string xAsString = ReadLine();
-                isXAnInt = int.TryParse(xAsString, out xAsInt);
-
-                if (!isXAnInt)
-                {
-                    WriteLine("That was not an integer. Please try again.");
-                    continue;
-                }
-
-                if (xAsInt > WidthOfGameboard || xAsInt < 1)
-                {
-                    WriteLine("That is outside of the board. Please try again.");
-                    continue;
-                }
-                xAsInt -= 1;
-                withinGrid = true;
-            }
-
-            withinGrid = false;
-            while (!withinGrid || !isYAnInt)
-            {
-                Write("Enter the column of your move:");
-                string yAsString = ReadLine();
-                isYAnInt = int.TryParse(yAsString, out yAsInt);
-
-                if (!isYAnInt)
-                {
-                    WriteLine("That was not an integer. Please try again.");
-                    continue;
-                }
-
-                if (yAsInt > HeightOfGameboard || yAsInt < 1)
-                {
-                    WriteLine("That is outside of the board. Please try again.");
-                    continue;
-                }
-                yAsInt -= 1;
-                withinGrid = true;
-            }
-
+ 
             while (!isPieceAnInt)
             {
                 Write("Enter the number you wish to place:");
@@ -510,20 +536,65 @@ namespace Tic_Tac_Toe_Assignment
         //constructor
         public NumericalTicTacToe()
         {
-            gameboard = new Gameboard(HeightOfGameboard, WidthOfGameboard);
+            gameboard = new Gameboard(HEIGHT_OF_GAMEBOARD, WIDTH_OF_GAMEBOARD);
             helpSystem = new HelpSystem();
+            logger = new History();
+            FileStream outFile = logger.MakeSaveFile();
             CurrentPlayerID = 1;
         }
     }
 
+    abstract class Player
+    {
+        //fields
+        //properties
+        public int playerID { get; set; }
+
+        //methods
+        public void getMove ()
+        {
+            string input = ReadLine();
+        }
+        //constructor
+    }
+
+    internal class HumanPlayer : Player
+    {
+        //fields
+        //properties
+        //methods
+        //constructor
+    }
+    internal class ComputerPlayer : Player
+    {
+        //fields
+        //properties
+        //methods
+        //constructor
+    }
     internal class History
     {
         //fields
-
+        private int saveFileID = 0;
         //properties
+        public int SaveFileID
+        {
+            get; set;
+        }
 
         //methods
-
+        public FileStream MakeSaveFile()
+        {
+            string newFileName;
+            newFileName = "Save File #" + SaveFileID;
+            FileStream outFile = new FileStream(newFileName, FileMode.Create, FileAccess.Write);
+            return outFile;
+        }
+        public void Log(FileStream outFile, Gameboard currentboard)
+        {
+            StreamWriter writer = new StreamWriter(outFile);
+            writer.WriteLine(currentboard.ToString());
+        }
         //constructor
     }
 
