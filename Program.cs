@@ -66,7 +66,6 @@ namespace Tic_Tac_Toe_Assignment
         {
             string validatedInput = "";
             bool playerQuit = false;
-            bool gameIsOver = false;
 
             while (!playerQuit)
             {
@@ -83,26 +82,7 @@ namespace Tic_Tac_Toe_Assignment
                 }
                 if (validatedInput == REQUEST_MOVE)
                 {
-                    updateScreen();
-                    WriteLine("The number of turns that have been made are: {0}", TurnCounter);
-                    TurnCounter += 1;
-                    gameIsOver = currentGame.gameTurn();
-                    if (gameIsOver)
-                    {
-                        updateScreen();
-                        switch (currentGame.CurrentPlayerID) //allows modularity for games with more than 2 players in future
-                        {
-                            case 0:
-                                WriteLine("The winner is player 2. Congratulations!"); //because player 2 is stored as 0 in CurrentPlayerID
-                                break;
-                            case 1:
-                                WriteLine("The winner is player 1. Congratulations!");
-                                break;
-                        }
-                        WriteLine(LEAVE_GAME);
-                        Environment.Exit(0);
-                    }
-                    updateScreen();
+                    gameRound();
                 }
 
             }
@@ -202,11 +182,13 @@ namespace Tic_Tac_Toe_Assignment
                     {
                         WriteLine("You picked Human vs Human.\n");
                         validPick = true;
+                        currentGame.CreatePlayers("Human");
                     }
                     else if (choice == 2)
                     {
                         WriteLine("You picked Computer vs Human.\n");
                         validPick = true;
+                        currentGame.CreatePlayers("Computer");
                     }
                     else
                     {
@@ -233,6 +215,25 @@ namespace Tic_Tac_Toe_Assignment
                     }
 
                 }
+            }
+        }
+        private void gameRound()
+        {
+            bool gameIsOver = false;
+            for (int i = 0; i < currentGame.PlayerList.Length; i++)
+            {
+                updateScreen();
+                WriteLine("The number of turns that have been made are: {0}", TurnCounter);
+                TurnCounter += 1;
+                gameIsOver = currentGame.gameTurn(currentGame.PlayerList[i]);
+                if (gameIsOver)
+                {
+                    updateScreen();
+                    WriteLine("The winner is player {0}. Congratulations! Well played.", currentGame.PlayerList[i].PlayerID); //or i+1
+                    WriteLine(LEAVE_GAME);
+                    Environment.Exit(0);
+                }
+                updateScreen();
             }
         }
         //constructor - currently using default constructor
@@ -293,20 +294,21 @@ namespace Tic_Tac_Toe_Assignment
     {
         //fields
         private bool gameOver = false;
-        private int currentPlayerID;
+        private Player[] playerList;
         public Gameboard gameboard;
         public HelpSystem helpSystem;
         public History logger;
+        protected FileStream outFile;
 
         //properties
+        public Player[] PlayerList
+        {
+            get { return playerList; }
+            set { playerList = value; }
+        }
         public abstract string[] Pieces
         {
             get; set;
-        }
-        public int CurrentPlayerID
-        {
-            get { return currentPlayerID; }
-            set { currentPlayerID = value; }
         }
         public abstract string Rules
         {
@@ -318,36 +320,22 @@ namespace Tic_Tac_Toe_Assignment
             get;
         }
 
-        /*
-        public abstract Player[] PlayerList
-        {
-            get; set;
-        }
-        */
-
         //methods
-        public abstract bool makeMove();
+        public abstract bool makeMove(int playerID);
 
         public abstract bool isGameOver();
-        public bool gameTurn()
+        public bool gameTurn(Player currentPlayer)
         {
            
             bool turnComplete = false;
             while (!turnComplete)
             {
-                turnComplete = makeMove();
+                turnComplete = makeMove(currentPlayer.PlayerID);
             }
             logger.Log(outFile, gameboard);
-            gameOver = isGameOver();
-            if (!gameOver)
-            {
-                CurrentPlayerID = (CurrentPlayerID + 1) % PlayersCount;
-                return gameOver;
-            }
-            else
-                return gameOver = true;
-            
+            return isGameOver();
         }
+        public abstract void CreatePlayers(string selection);
 
         //constructor: TODO implement abstract constructor & have children inherit
     }
@@ -402,12 +390,26 @@ namespace Tic_Tac_Toe_Assignment
         }
 
         //methods
-
-        private bool validateMove(int x, int y, string piece)
+        public override void CreatePlayers(string selection)
+        {
+            PlayerList = new Player[PLAYERS_COUNT];
+            PlayerList[0] = new HumanPlayer();
+            if (selection == "Human")
+            {
+                PlayerList[1] = new HumanPlayer();
+            }
+            else //selection = "Computer"
+            {
+                PlayerList[1] = new ComputerPlayer();
+            }
+            PlayerList[0].PlayerID = 1; 
+            PlayerList[1].PlayerID = 2;
+        }
+        private bool validateMove(int x, int y, string piece, int player)
         {
             bool playerMatch = false;
             int intPiece2 = int.Parse(piece);
-            playerMatch = (CurrentPlayerID == intPiece2 % 2); //player 1 (odd) is number 1. player 2 (even) is 0
+            playerMatch = (player % 2 == intPiece2 % 2); //player 1 (odd), player 2 (even)
 
             bool spareMove = false;
             for (int i =  0; i < Pieces.Length; i++)
@@ -430,7 +432,7 @@ namespace Tic_Tac_Toe_Assignment
             else { return  false; }
         }
 
-        public override bool makeMove()
+        public override bool makeMove(int currentPlayer)
         {
             bool turnSuccess = false;
             bool withinGrid = false;
@@ -443,17 +445,52 @@ namespace Tic_Tac_Toe_Assignment
             int intPiece = -1;
             string pieceAsString = "";
 
-            switch(CurrentPlayerID) //allows modularity for games with more than 2 players in future
+            WriteLine("It's Player {0}'s turn.\n", currentPlayer);
+
+            while (!withinGrid || !isXAnInt)
             {
-                case 0:
-                    Write("It's Player 2's turn.\n\n"); //because player 2 is stored as 0 in CurrentPlayerID
-                    break;
-                case 1:
-                    Write("It's Player 1's turn.\n\n");
-                    break;
+                Write("Enter the row of your move:");
+                string xAsString = ReadLine();
+                isXAnInt = int.TryParse(xAsString, out xAsInt);
+
+                if (!isXAnInt)
+                {
+                    WriteLine("That was not an integer. Please try again.");
+                    continue;
+                }
+
+                if (xAsInt > WIDTH_OF_GAMEBOARD || xAsInt < 1)
+                {
+                    WriteLine("That is outside of the board. Please try again.");
+                    continue;
+                }
+                xAsInt -= 1;
+                withinGrid = true;
             }
 
- 
+            withinGrid = false;
+            while (!withinGrid || !isYAnInt)
+            {
+                Write("Enter the column of your move:");
+                string yAsString = ReadLine();
+                isYAnInt = int.TryParse(yAsString, out yAsInt);
+
+                if (!isYAnInt)
+                {
+                    WriteLine("That was not an integer. Please try again.");
+                    continue;
+                }
+
+                if (yAsInt > HEIGHT_OF_GAMEBOARD || yAsInt < 1)
+                {
+                    WriteLine("That is outside of the board. Please try again.");
+                    continue;
+                }
+                yAsInt -= 1;
+                withinGrid = true;
+            }
+
+
             while (!isPieceAnInt)
             {
                 Write("Enter the number you wish to place:");
@@ -467,10 +504,10 @@ namespace Tic_Tac_Toe_Assignment
             }
 
             bool validMove = false;
-            validMove = validateMove(xAsInt, yAsInt, pieceAsString);
+            validMove = validateMove(xAsInt, yAsInt, pieceAsString, currentPlayer);
             if (!validMove)
             {
-                WriteLine("That was not a valid move. Either:\n" +
+                WriteLine("\nThat was not a valid move. Either:\n" +
                     "- that move has been used, or\n" +
                     "- you cannot use that piece, or\n" +
                     "- that cell on the gameboard is taken.\n" +
@@ -538,9 +575,8 @@ namespace Tic_Tac_Toe_Assignment
         {
             gameboard = new Gameboard(HEIGHT_OF_GAMEBOARD, WIDTH_OF_GAMEBOARD);
             helpSystem = new HelpSystem();
-            logger = new History();
-            FileStream outFile = logger.MakeSaveFile();
-            CurrentPlayerID = 1;
+            base.logger = new History();
+            base.outFile = base.logger.MakeSaveFile();
         }
     }
 
@@ -548,10 +584,10 @@ namespace Tic_Tac_Toe_Assignment
     {
         //fields
         //properties
-        public int playerID { get; set; }
+        public int PlayerID { get; set; }
 
         //methods
-        public void getMove ()
+        public void getMove()
         {
             string input = ReadLine();
         }
@@ -575,25 +611,23 @@ namespace Tic_Tac_Toe_Assignment
     internal class History
     {
         //fields
-        private int saveFileID = 0;
+        private const string SAVE_FILE_NAME = "Save_File";
         //properties
-        public int SaveFileID
-        {
-            get; set;
-        }
 
         //methods
         public FileStream MakeSaveFile()
         {
-            string newFileName;
-            newFileName = "Save File #" + SaveFileID;
-            FileStream outFile = new FileStream(newFileName, FileMode.Create, FileAccess.Write);
+            FileStream outFile = new FileStream(SAVE_FILE_NAME, FileMode.Create, FileAccess.Write);
             return outFile;
         }
         public void Log(FileStream outFile, Gameboard currentboard)
         {
             StreamWriter writer = new StreamWriter(outFile);
             writer.WriteLine(currentboard.ToString());
+        }
+        public void LoadSaveFile()
+        {
+            //TODO
         }
         //constructor
     }
