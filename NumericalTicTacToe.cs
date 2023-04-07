@@ -94,18 +94,17 @@ namespace Tic_Tac_Toe_Assignment
             else { return false; }
         }
 
-        public override bool makeMove(int currentPlayer, Player player)
+        public override bool makeMove(Player player)
         {
-            WriteLine("It's Player {0}'s turn.\n", currentPlayer);
+            WriteLine("It's Player {0}'s turn.\n", player.PlayerID);
 
-            if (player.PlayerType == "Computer")
+            if (player.GetType() == typeof(ComputerPlayer)) //if the player is a computer
             {
-                player.getMove(currentPlayer);
+                player.getMove();
                 return true;
             }
             else
             {
-
                 bool turnSuccess = false;
                 bool withinGrid = false;
                 bool isXAnInt = false;
@@ -120,8 +119,8 @@ namespace Tic_Tac_Toe_Assignment
                 while (!withinGrid || !isXAnInt)
                 {
                     Write("Enter the row of your move:");
-                    string xAsString = ReadLine();
-                    isXAnInt = int.TryParse(xAsString, out xAsInt);
+                    player.getMove();
+                    isXAnInt = int.TryParse(player.Input, out xAsInt);
 
                     if (!isXAnInt)
                     {
@@ -173,7 +172,7 @@ namespace Tic_Tac_Toe_Assignment
                     }
                 }
 
-                if (!validateMove(xAsInt, yAsInt, pieceAsString, currentPlayer))
+                if (!validateMove(xAsInt, yAsInt, pieceAsString, player.PlayerID))
                 {
                     WriteLine("\nThat was not a valid move. Either:\n" +
                         "- that move has been used, or\n" +

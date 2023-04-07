@@ -14,9 +14,4 @@ namespace Tic_Tac_Toe_Assignment
             string input = ReadLine();
         }
     //constructor
-    public HumanPlayer() //do I need this?
-        {
-            base.PlayerType = "Human";
-        }
-    }
 }
