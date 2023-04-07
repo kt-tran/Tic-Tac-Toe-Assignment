@@ -14,7 +14,7 @@ namespace Tic_Tac_Toe_Assignment
         //properties
 
         //methods
-        public override void getMove(int playerNum)
+        public override void getMove()
         {
             Random rnd = new Random(); //can potentially generate identical values due to default seed value being time-dependent
             bool correctPiece = false;
@@ -24,7 +24,7 @@ namespace Tic_Tac_Toe_Assignment
                 index = rnd.Next(computerGame.Pieces.Length); //generate random indexes for pieces
                 int generatedPiece = int.Parse(computerGame.Pieces[index]);
                 if (generatedPiece == 0) continue; // Check for 0
-                correctPiece = generatedPiece % 2 == playerNum % 2;
+                correctPiece = generatedPiece % 2 == PlayerID % 2;
             }
 
             for (int x = 0; x < computerGame.gameboard.Board.GetLength(0); x++)
@@ -43,7 +43,6 @@ namespace Tic_Tac_Toe_Assignment
         //constructor
         public ComputerPlayer(Game game) 
         {
-            base.PlayerType = "Computer"; //do I need this?
             rnd = new Random();
             computerGame = game;
         }

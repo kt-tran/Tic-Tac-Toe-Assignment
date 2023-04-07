@@ -35,7 +35,7 @@ namespace Tic_Tac_Toe_Assignment
         }
 
         //methods
-        public abstract bool makeMove(int playerID, Player player);
+        public abstract bool makeMove(Player player);
 
         public abstract bool isGameOver();
         public bool gameTurn(Player currentPlayer)
@@ -44,7 +44,7 @@ namespace Tic_Tac_Toe_Assignment
             bool turnComplete = false;
             while (!turnComplete)
             {
-                turnComplete = makeMove(currentPlayer.PlayerID, currentPlayer);
+                turnComplete = makeMove(currentPlayer);
             }
             logger.Log(outFile, gameboard);
             return isGameOver();

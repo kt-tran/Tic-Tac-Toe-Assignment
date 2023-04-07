@@ -7,11 +7,17 @@ namespace Tic_Tac_Toe_Assignment
     internal class HumanPlayer : Player
     {
         //fields
+        private string input = "";
         //properties
-        //methods
-        public override void getMove(int playerNum) //it doesn't do anything with the playerID
+        public string Input
         {
-            string input = ReadLine();
+            get; set;
         }
-    //constructor
+        //methods
+        public override void getMove()
+        {
+            Input = ReadLine();
+        }
+        //constructor
+    }
 }
