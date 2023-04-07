@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
+using System.Transactions;
 using static System.Console;
 
 namespace Tic_Tac_Toe_Assignment
@@ -54,20 +56,16 @@ namespace Tic_Tac_Toe_Assignment
         }
 
         //methods
-        public override void CreatePlayers(string selection)
+        public override void CreateHumanPlayer(int index)
         {
-            PlayerList = new Player[PLAYERS_COUNT];
-            PlayerList[0] = new HumanPlayer();
-            if (selection == "Human")
-            {
-                PlayerList[1] = new HumanPlayer();
-            }
-            else //selection = "Computer"
-            {
-                PlayerList[1] = new ComputerPlayer();
-            }
-            PlayerList[0].PlayerID = 1;
-            PlayerList[1].PlayerID = 2;
+            PlayerList[index] = new HumanPlayer();
+            PlayerList[index].PlayerID = index + 1;
+        }
+
+        public override void CreateComputerPlayer(int index, Game game)
+        {
+            PlayerList[index] = new ComputerPlayer(game); //check if this works
+            PlayerList[index].PlayerID = index + 1;
         }
         private bool validateMove(int x, int y, string piece, int player)
         {
@@ -96,95 +94,100 @@ namespace Tic_Tac_Toe_Assignment
             else { return false; }
         }
 
-        public override bool makeMove(int currentPlayer)
+        public override bool makeMove(int currentPlayer, Player player)
         {
-            bool turnSuccess = false;
-            bool withinGrid = false;
-            bool isXAnInt = false;
-            bool isYAnInt = false;
-            bool isPieceAnInt = false;
-
-            int xAsInt = -1;
-            int yAsInt = -1;
-            int intPiece = -1;
-            string pieceAsString = "";
-
             WriteLine("It's Player {0}'s turn.\n", currentPlayer);
 
-            while (!withinGrid || !isXAnInt)
+            if (player.PlayerType == "Computer")
             {
-                Write("Enter the row of your move:");
-                string xAsString = ReadLine();
-                isXAnInt = int.TryParse(xAsString, out xAsInt);
-
-                if (!isXAnInt)
-                {
-                    WriteLine("That was not an integer. Please try again.");
-                    continue;
-                }
-
-                if (xAsInt > WIDTH_OF_GAMEBOARD || xAsInt < 1)
-                {
-                    WriteLine("That is outside of the board. Please try again.");
-                    continue;
-                }
-                xAsInt -= 1;
-                withinGrid = true;
-            }
-
-            withinGrid = false;
-            while (!withinGrid || !isYAnInt)
-            {
-                Write("Enter the column of your move:");
-                string yAsString = ReadLine();
-                isYAnInt = int.TryParse(yAsString, out yAsInt);
-
-                if (!isYAnInt)
-                {
-                    WriteLine("That was not an integer. Please try again.");
-                    continue;
-                }
-
-                if (yAsInt > HEIGHT_OF_GAMEBOARD || yAsInt < 1)
-                {
-                    WriteLine("That is outside of the board. Please try again.");
-                    continue;
-                }
-                yAsInt -= 1;
-                withinGrid = true;
-            }
-
-
-            while (!isPieceAnInt)
-            {
-                Write("Enter the number you wish to place:");
-                pieceAsString = ReadLine();
-                isPieceAnInt = int.TryParse(pieceAsString, out intPiece);
-                if (!isPieceAnInt)
-                {
-                    WriteLine("That was not a number between 1 and 9 (inclusive). Please try again.");
-                    continue;
-                }
-            }
-
-            bool validMove = false;
-            validMove = validateMove(xAsInt, yAsInt, pieceAsString, currentPlayer);
-            if (!validMove)
-            {
-                WriteLine("\nThat was not a valid move. Either:\n" +
-                    "- that move has been used, or\n" +
-                    "- you cannot use that piece, or\n" +
-                    "- that cell on the gameboard is taken.\n" +
-                    "Please try again.\n");
-                return turnSuccess;
+                player.getMove(currentPlayer);
+                return true;
             }
             else
             {
-                gameboard.placePiece(xAsInt, yAsInt, pieceAsString);
-                return turnSuccess = true;
+
+                bool turnSuccess = false;
+                bool withinGrid = false;
+                bool isXAnInt = false;
+                bool isYAnInt = false;
+                bool isPieceAnInt = false;
+
+                int xAsInt = -1;
+                int yAsInt = -1;
+                int intPiece = -1;
+                string pieceAsString = "";
+
+                while (!withinGrid || !isXAnInt)
+                {
+                    Write("Enter the row of your move:");
+                    string xAsString = ReadLine();
+                    isXAnInt = int.TryParse(xAsString, out xAsInt);
+
+                    if (!isXAnInt)
+                    {
+                        WriteLine("That was not an integer. Please try again.");
+                        continue;
+                    }
+
+                    if (xAsInt > WIDTH_OF_GAMEBOARD || xAsInt < 1)
+                    {
+                        WriteLine("That is outside of the board. Please try again.");
+                        continue;
+                    }
+                    xAsInt -= 1;
+                    withinGrid = true;
+                }
+
+                withinGrid = false;
+                while (!withinGrid || !isYAnInt)
+                {
+                    Write("Enter the column of your move:");
+                    string yAsString = ReadLine();
+                    isYAnInt = int.TryParse(yAsString, out yAsInt);
+
+                    if (!isYAnInt)
+                    {
+                        WriteLine("That was not an integer. Please try again.");
+                        continue;
+                    }
+
+                    if (yAsInt > HEIGHT_OF_GAMEBOARD || yAsInt < 1)
+                    {
+                        WriteLine("That is outside of the board. Please try again.");
+                        continue;
+                    }
+                    yAsInt -= 1;
+                    withinGrid = true;
+                }
+
+
+                while (!isPieceAnInt)
+                {
+                    Write("Enter the number you wish to place:");
+                    pieceAsString = ReadLine();
+                    isPieceAnInt = int.TryParse(pieceAsString, out intPiece);
+                    if (!isPieceAnInt)
+                    {
+                        WriteLine("That was not a number between 1 and 9 (inclusive). Please try again.");
+                        continue;
+                    }
+                }
+
+                if (!validateMove(xAsInt, yAsInt, pieceAsString, currentPlayer))
+                {
+                    WriteLine("\nThat was not a valid move. Either:\n" +
+                        "- that move has been used, or\n" +
+                        "- you cannot use that piece, or\n" +
+                        "- that cell on the gameboard is taken.\n" +
+                        "Please try again.\n");
+                    return turnSuccess;
+                }
+                else
+                {
+                    gameboard.placePiece(xAsInt, yAsInt, pieceAsString);
+                    return turnSuccess = true;
+                }
             }
-
-
         }
 
         public override bool isGameOver()
@@ -238,6 +241,7 @@ namespace Tic_Tac_Toe_Assignment
         public NumericalTicTacToe()
         {
             gameboard = new Gameboard(HEIGHT_OF_GAMEBOARD, WIDTH_OF_GAMEBOARD);
+            PlayerList = new Player[PLAYERS_COUNT];
             helpSystem = new HelpSystem();
             base.logger = new History();
             base.outFile = base.logger.MakeSaveFile();

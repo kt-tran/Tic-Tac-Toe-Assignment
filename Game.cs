@@ -35,7 +35,7 @@ namespace Tic_Tac_Toe_Assignment
         }
 
         //methods
-        public abstract bool makeMove(int playerID);
+        public abstract bool makeMove(int playerID, Player player);
 
         public abstract bool isGameOver();
         public bool gameTurn(Player currentPlayer)
@@ -44,12 +44,14 @@ namespace Tic_Tac_Toe_Assignment
             bool turnComplete = false;
             while (!turnComplete)
             {
-                turnComplete = makeMove(currentPlayer.PlayerID);
+                turnComplete = makeMove(currentPlayer.PlayerID, currentPlayer);
             }
             logger.Log(outFile, gameboard);
             return isGameOver();
         }
-        public abstract void CreatePlayers(string selection);
+        public abstract void CreateHumanPlayer(int index);
+
+        public abstract void CreateComputerPlayer(int index, Game game);
 
         //constructor: TODO implement abstract constructor & have children inherit
     }

@@ -9,6 +9,14 @@ namespace Tic_Tac_Toe_Assignment
         //fields
         //properties
         //methods
-        //constructor
+        public override void getMove(int playerNum) //it doesn't do anything with the playerID
+        {
+            string input = ReadLine();
+        }
+    //constructor
+    public HumanPlayer() //do I need this?
+        {
+            base.PlayerType = "Human";
+        }
     }
 }

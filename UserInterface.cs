@@ -169,13 +169,15 @@ namespace Tic_Tac_Toe_Assignment
                     {
                         WriteLine("You picked Human vs Human.\n");
                         validPick = true;
-                        currentGame.CreatePlayers("Human");
+                        currentGame.CreateHumanPlayer(0);
+                        currentGame.CreateHumanPlayer(1);
                     }
                     else if (choice == 2)
                     {
                         WriteLine("You picked Computer vs Human.\n");
                         validPick = true;
-                        currentGame.CreatePlayers("Computer");
+                        currentGame.CreateHumanPlayer(0);
+                        currentGame.CreateComputerPlayer(1, currentGame);
                     }
                     else
                     {
