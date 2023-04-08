@@ -9,7 +9,7 @@ namespace Tic_Tac_Toe_Assignment
         //fields
         private string input = "";
         //properties
-        public string Input
+        public override string Input
         {
             get; set;
         }

@@ -15,6 +15,10 @@ namespace Tic_Tac_Toe_Assignment
         protected FileStream outFile;
 
         //properties
+        public abstract bool IsGameOver
+        {
+            get; set;
+        }
         public Player[] PlayerList
         {
             get { return playerList; }
@@ -34,25 +38,29 @@ namespace Tic_Tac_Toe_Assignment
             get;
         }
 
+        public abstract int CurrentPlayerIndex
+        {
+            get; protected set;
+        }
         //methods
         public abstract bool makeMove(Player player);
 
-        public abstract bool isGameOver();
-        public bool gameTurn(Player currentPlayer)
+        public abstract void isGameOver();
+        public void gameTurn()
         {
-
             bool turnComplete = false;
             while (!turnComplete)
             {
-                turnComplete = makeMove(currentPlayer);
+                turnComplete = makeMove(PlayerList[CurrentPlayerIndex]);
             }
             logger.Log(outFile, gameboard);
-            return isGameOver();
+            isGameOver();
+            if (!IsGameOver)
+                CurrentPlayerIndex = (CurrentPlayerIndex + 1) % PlayerList.Length;
         }
         public abstract void CreateHumanPlayer(int index);
 
         public abstract void CreateComputerPlayer(int index, Game game);
-
         //constructor: TODO implement abstract constructor & have children inherit
     }
 }

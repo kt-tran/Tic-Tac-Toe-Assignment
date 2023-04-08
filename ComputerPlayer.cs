@@ -12,7 +12,10 @@ namespace Tic_Tac_Toe_Assignment
         private Game computerGame;
 
         //properties
-
+        public override string Input //will not use this but is mandatory anyway
+        {
+            get; set;
+        }
         //methods
         public override void getMove()
         {

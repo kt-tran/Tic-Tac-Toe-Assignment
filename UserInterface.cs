@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using static System.Console;
 
 namespace Tic_Tac_Toe_Assignment
@@ -51,28 +52,23 @@ namespace Tic_Tac_Toe_Assignment
 
         public void mainApp()
         {
-            string validatedInput = "";
-            bool playerQuit = false;
-
-            while (!playerQuit)
+            while (!currentGame.IsGameOver)
             {
-                validatedInput = menu();
-                if (validatedInput == QUIT)
-                {
-                    playerQuit = true;
-                    WriteLine(LEAVE_GAME);
-                    Environment.Exit(0);
-                }
-                if (validatedInput == HELP)
-                {
-                    //helpSystem.printCommands(); 
-                }
-                if (validatedInput == REQUEST_MOVE)
-                {
-                    gameRound();
-                }
+                updateScreen();
+                WriteLine("The number of turns that have been made are: {0}", TurnCounter);
+                TurnCounter += 1;
 
+                if (currentGame.PlayerList[currentGame.CurrentPlayerIndex].GetType() == typeof(HumanPlayer)) //if the player is a human
+                    menu();
+                else
+                    currentGame.gameTurn();
+
+                updateScreen();
             }
+            updateScreen();
+            WriteLine("The winner is player {0}. Congratulations! Well played.", currentGame.CurrentPlayerIndex + 1);
+            WriteLine(LEAVE_GAME);
+            Environment.Exit(0);
         }
         private string updateScreen()
         {
@@ -80,25 +76,33 @@ namespace Tic_Tac_Toe_Assignment
             return currentGame.gameboard.ToString();
         }
 
-        private string menu() //eventually implement undo & redo
+        private void menu() //eventually implement undo & redo
         {
-            while (true)
+            bool playerQuit = false;
+
+            while (!playerQuit)
             {
                 Write(MENU_MESSAGE);
-                string input = ReadLine();
-                switch (input)
+                currentGame.PlayerList[currentGame.CurrentPlayerIndex].getMove();
+                switch (currentGame.PlayerList[currentGame.CurrentPlayerIndex].Input)
                 {
                     case QUIT:
-                        return QUIT;
+                        playerQuit = true;
+                        WriteLine(LEAVE_GAME);
+                        Environment.Exit(0);
+                        break;
                     case HELP:
-                        return HELP;
+                        //helpSystem.printCommands(); 
+                        break;
                     case REQUEST_MOVE:
-                        return REQUEST_MOVE;
+                        currentGame.gameTurn();
+                        return;
                     default:
                         WriteLine(INVALID_MOVE);
                         break;
 
                 }
+
             }
 
         }
@@ -204,25 +208,6 @@ namespace Tic_Tac_Toe_Assignment
                     }
 
                 }
-            }
-        }
-        private void gameRound()
-        {
-            bool gameIsOver = false;
-            for (int i = 0; i < currentGame.PlayerList.Length; i++)
-            {
-                updateScreen();
-                WriteLine("The number of turns that have been made are: {0}", TurnCounter);
-                TurnCounter += 1;
-                gameIsOver = currentGame.gameTurn(currentGame.PlayerList[i]);
-                if (gameIsOver)
-                {
-                    updateScreen();
-                    WriteLine("The winner is player {0}. Congratulations! Well played.", currentGame.PlayerList[i].PlayerID); //or i+1
-                    WriteLine(LEAVE_GAME);
-                    Environment.Exit(0);
-                }
-                updateScreen();
             }
         }
         //constructor - currently using default constructor

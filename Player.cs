@@ -8,6 +8,10 @@ namespace Tic_Tac_Toe_Assignment
     {
         //fields
         //properties
+        public abstract string Input
+        {
+            get; set;
+        }
         public int PlayerID { get; set; }
 
         //methods
