@@ -7,11 +7,12 @@ namespace Tic_Tac_Toe_Assignment
     internal class HelpSystem
     {
         //fields
-        private static string WELCOME = "This is the Help System.\n" +
+        private static string WELCOME = "\nThis is the Help System.\n" +
             "Enter 'rules' to see the rules of the game you're currently playing.\n" +
             "Enter 'moves' to view more information on how to make a move.\n" +
-            "Enter 'close' to exit the help system.";
-        private static string AVAILABLE_COMMANDS = "These are your possible moves.\n" +
+            "Enter 'close' to exit the help system.\n" +
+            "Your input:";
+        private static string AVAILABLE_COMMANDS = "\nThese are your possible moves.\n" +
                         "When it is your turn, you can enter:\n" +
                         "- 'save' to save the current game\n" +
                         "- 'undo' to undo both your and your opponent's previous move\n" +
@@ -19,8 +20,6 @@ namespace Tic_Tac_Toe_Assignment
                         "- 'place' to make a move\n" +
                         "- 'help' for assistance\n" +
                         "- 'QUIT' to exit\n";
-
-        private string gameRules;
 
         //properties
         internal string Welcome 

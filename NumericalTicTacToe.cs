@@ -14,7 +14,7 @@ namespace Tic_Tac_Toe_Assignment
 
 
         //properties
-        internal override bool IsGameOver
+        internal override bool GameOver
         {
             get; set;
         }
@@ -205,8 +205,8 @@ namespace Tic_Tac_Toe_Assignment
                 for (int y = 0; y < gameboard.Board.GetLength(1); y++)
                 {
                     total += int.Parse(gameboard.Board[x, y]);
-                    if (total == 15)
-                        IsGameOver = true;
+                    if (total == WIN_TOTAL)
+                        GameOver = true;
                 }
                 total = 0; //reset after each row
             }
@@ -217,8 +217,8 @@ namespace Tic_Tac_Toe_Assignment
                 for (int x = 0; x < gameboard.Board.GetLength(0); x++)
                 {
                     total += int.Parse(gameboard.Board[x, y]);
-                    if (total == 15)
-                        IsGameOver = true;
+                    if (total == WIN_TOTAL)
+                        GameOver = true;
                 }
                 total = 0; //reset after each column
             }
@@ -227,16 +227,16 @@ namespace Tic_Tac_Toe_Assignment
             for (int x = 0, y = 0; x < gameboard.Board.GetLength(0); x++, y++) //checks \ diagonal, from top left to bottom right 
             {
                 total += int.Parse(gameboard.Board[x, y]);
-                if (total == 15)
-                    IsGameOver = true;
+                if (total == WIN_TOTAL)
+                    GameOver = true;
             }
             total = 0; //reset before checking the other diagonal direction
 
             for (int x = 0, y = 2; x < gameboard.Board.GetLength(0); x++, y--) //checks / diagonal, from bottom left to top right
             {
                 total += int.Parse(gameboard.Board[x, y]);
-                if (total == 15)
-                    IsGameOver = true;
+                if (total == WIN_TOTAL)
+                    GameOver = true;
             }
         }
 
@@ -248,7 +248,7 @@ namespace Tic_Tac_Toe_Assignment
             helpS = new HelpSystem();
             helpS.GameRules = Rules;
             base.logger = new History();
-            base.outFile = base.logger.MakeSaveFile();
+            base.logger.MakeSaveFile();
         }
     }
 }

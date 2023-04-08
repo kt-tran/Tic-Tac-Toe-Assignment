@@ -7,19 +7,17 @@ namespace Tic_Tac_Toe_Assignment
     internal abstract class Game
     {
         //fields
-        private bool gameOver = false;
         private Player[] playerList;
         public Gameboard gameboard;
         public HelpSystem helpS;
         public History logger;
-        protected FileStream outFile;
 
         //properties
         protected abstract int PlayersCount
         {
             get;
         }
-        internal abstract bool IsGameOver
+        internal abstract bool GameOver
         {
             get; set;
         }
@@ -56,9 +54,9 @@ namespace Tic_Tac_Toe_Assignment
             {
                 turnComplete = MakeMove(PlayerList[CurrentPlayerIndex]);
             }
-            logger.Log(outFile, gameboard);
+            logger.Log(gameboard);
             CheckWinner();
-            if (!IsGameOver)
+            if (!GameOver)
                 CurrentPlayerIndex = (CurrentPlayerIndex + 1) % PlayerList.Length;
         }
         internal abstract void CreateHumanPlayer(int index);

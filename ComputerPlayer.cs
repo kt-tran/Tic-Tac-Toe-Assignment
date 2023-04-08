@@ -8,7 +8,6 @@ namespace Tic_Tac_Toe_Assignment
     internal class ComputerPlayer : Player
     {
         //fields
-        Random rnd;
         private Game computerGame;
 
         //properties
@@ -46,7 +45,7 @@ namespace Tic_Tac_Toe_Assignment
         //constructor
         internal ComputerPlayer(Game game) 
         {
-            rnd = new Random();
+            Random rnd = new Random();
             computerGame = game;
         }
     }

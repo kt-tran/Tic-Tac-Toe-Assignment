@@ -33,7 +33,6 @@ namespace Tic_Tac_Toe_Assignment
         private const string QUIT = "QUIT";
         private const string HELP = "help";
         private const string REQUEST_MOVE = "place";
-        private int turnCounter = 0;
 
         //properties
         private int TurnCounter
@@ -52,7 +51,7 @@ namespace Tic_Tac_Toe_Assignment
 
         internal void MainApp()
         {
-            while (!currentGame.IsGameOver)
+            while (!currentGame.GameOver)
             {
                 UpdateScreen();
                 WriteLine("The number of turns that have been made are: {0}", TurnCounter);
@@ -92,18 +91,24 @@ namespace Tic_Tac_Toe_Assignment
                         Environment.Exit(0);
                         break;
                     case HELP:
-                        WriteLine(currentGame.helpS.Welcome);
-                        currentGame.CurrentPlayer.GetMove();
-                        switch (currentGame.CurrentPlayer.Input)
+                        bool help = true;
+                        while (help)
                         {
-                            case "rules":
-                                WriteLine(currentGame.helpS.GameRules);
-                                //how do I make it go back to the welcome screen??
-                            case "moves":
-                                WriteLine(currentGame.helpS.AvailableCommands);
-
-                            case "close":
-                                break;
+                            WriteLine(currentGame.helpS.Welcome);
+                            currentGame.CurrentPlayer.GetMove();
+                            switch (currentGame.CurrentPlayer.Input)
+                            {
+                                case "rules":
+                                    WriteLine(currentGame.helpS.GameRules);
+                                    break;
+                                case "moves":
+                                    WriteLine(currentGame.helpS.AvailableCommands);
+                                    break;
+                                case "close":
+                                    help = false;
+                                    break;
+                            }
+                            
                         }
                         break;
                     case REQUEST_MOVE:
@@ -177,9 +182,7 @@ namespace Tic_Tac_Toe_Assignment
                 Write(HUMAN_OR_COMPUTER);
                 string Request = ReadLine();
                 int choice;
-                bool isRequestAnInt = false;
-                isRequestAnInt = int.TryParse(Request, out choice);
-                if (isRequestAnInt)
+                if (int.TryParse(Request, out choice))
                 {
                     if (choice == 1)
                     {

@@ -7,7 +7,6 @@ namespace Tic_Tac_Toe_Assignment
     internal class HumanPlayer : Player
     {
         //fields
-        private string input = "";
         //properties
         internal override string Input
         {
