@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
-using System.Transactions;
 using static System.Console;
 
 namespace Tic_Tac_Toe_Assignment
@@ -245,7 +243,8 @@ namespace Tic_Tac_Toe_Assignment
         {
             gameboard = new Gameboard(HEIGHT_OF_GAMEBOARD, WIDTH_OF_GAMEBOARD);
             PlayerList = new Player[PLAYERS_COUNT];
-            helpSystem = new HelpSystem();
+            helpS = new HelpSystem();
+            helpS.GameRules = Rules;
             base.logger = new History();
             base.outFile = base.logger.MakeSaveFile();
         }

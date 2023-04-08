@@ -10,7 +10,7 @@ namespace Tic_Tac_Toe_Assignment
         private bool gameOver = false;
         private Player[] playerList;
         public Gameboard gameboard;
-        public HelpSystem helpSystem;
+        public HelpSystem helpS;
         public History logger;
         protected FileStream outFile;
 
@@ -61,6 +61,6 @@ namespace Tic_Tac_Toe_Assignment
         public abstract void CreateHumanPlayer(int index);
 
         public abstract void CreateComputerPlayer(int index, Game game);
-        //constructor: TODO implement abstract constructor & have children inherit
+        
     }
 }
