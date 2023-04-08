@@ -9,12 +9,12 @@ namespace Tic_Tac_Toe_Assignment
         //fields
         private string input = "";
         //properties
-        public override string Input
+        internal override string Input
         {
             get; set;
         }
         //methods
-        public override void getMove()
+        internal override void GetMove()
         {
             Input = ReadLine();
         }

@@ -4,7 +4,7 @@ using static System.Console;
 
 namespace Tic_Tac_Toe_Assignment
 {
-    abstract class Game
+    internal abstract class Game
     {
         //fields
         private bool gameOver = false;
@@ -15,52 +15,55 @@ namespace Tic_Tac_Toe_Assignment
         protected FileStream outFile;
 
         //properties
-        public abstract bool IsGameOver
+        protected abstract int PlayersCount
+        {
+            get;
+        }
+        internal abstract bool IsGameOver
         {
             get; set;
         }
-        public Player[] PlayerList
+        protected Player[] PlayerList
         {
             get { return playerList; }
             set { playerList = value; }
         }
-        public abstract string[] Pieces
+        internal abstract string[] Pieces
         {
             get; set;
         }
-        public abstract string Rules
+        protected internal abstract string Rules
         {
             get;
         }
 
-        public abstract int PlayersCount
+        protected abstract int CurrentPlayerIndex
         {
-            get;
+            get; set;
         }
 
-        public abstract int CurrentPlayerIndex
-        {
-            get; protected set;
-        }
+        internal abstract Player CurrentPlayer
+        { get; }
+
         //methods
-        public abstract bool makeMove(Player player);
+        protected abstract bool MakeMove(Player player);
 
-        public abstract void isGameOver();
-        public void gameTurn()
+        protected abstract void CheckWinner();
+        internal void GameTurn()
         {
             bool turnComplete = false;
             while (!turnComplete)
             {
-                turnComplete = makeMove(PlayerList[CurrentPlayerIndex]);
+                turnComplete = MakeMove(PlayerList[CurrentPlayerIndex]);
             }
             logger.Log(outFile, gameboard);
-            isGameOver();
+            CheckWinner();
             if (!IsGameOver)
                 CurrentPlayerIndex = (CurrentPlayerIndex + 1) % PlayerList.Length;
         }
-        public abstract void CreateHumanPlayer(int index);
+        internal abstract void CreateHumanPlayer(int index);
 
-        public abstract void CreateComputerPlayer(int index, Game game);
+        internal abstract void CreateComputerPlayer(int index, Game game);
         
     }
 }

@@ -10,13 +10,13 @@ namespace Tic_Tac_Toe_Assignment
         private string[,] board;
 
         //properties
-        public string[,] Board
+        internal string[,] Board
         {
             get { return board; }
         }
 
         //methods
-        public void placePiece(int x, int y, string piece)
+        internal void PlacePiece(int x, int y, string piece)
         {
             board[x, y] = piece;
         }
@@ -38,7 +38,7 @@ namespace Tic_Tac_Toe_Assignment
         }
 
         //constructor
-        public Gameboard(int x, int y)
+        internal Gameboard(int x, int y)
         {
             board = new string[x, y];
             for (int i = 0; i < board.GetLength(0); i++)

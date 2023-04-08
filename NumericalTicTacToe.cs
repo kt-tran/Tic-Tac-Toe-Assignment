@@ -7,7 +7,6 @@ namespace Tic_Tac_Toe_Assignment
     internal class NumericalTicTacToe : Game
     {
         //fields
-        private const int PLAYERS_COUNT = 2;
         private const int HEIGHT_OF_GAMEBOARD = 3;
         private const int WIDTH_OF_GAMEBOARD = 3;
         private const int WIN_TOTAL = 15;
@@ -15,15 +14,19 @@ namespace Tic_Tac_Toe_Assignment
 
 
         //properties
-        public override bool IsGameOver
+        internal override bool IsGameOver
         {
             get; set;
         }
-        public override int CurrentPlayerIndex
+        protected override int CurrentPlayerIndex
         {
-            get; protected set;
+            get; set;
         }
-        public override string[] Pieces
+        internal override Player CurrentPlayer
+        { 
+            get { return PlayerList[CurrentPlayerIndex]; } 
+        }
+        internal override string[] Pieces
         {
             get
             {
@@ -35,7 +38,7 @@ namespace Tic_Tac_Toe_Assignment
             }
         }
 
-        public override string Rules
+        protected internal override string Rules
         {
             get
             {
@@ -56,24 +59,23 @@ namespace Tic_Tac_Toe_Assignment
             }
         }
 
-        public override int PlayersCount
+        protected override int PlayersCount
         {
-            get { return PLAYERS_COUNT; }
+            get { return 2; }
         }
-
         //methods
-        public override void CreateHumanPlayer(int index)
+        internal override void CreateHumanPlayer(int index)
         {
             PlayerList[index] = new HumanPlayer();
             PlayerList[index].PlayerID = index + 1;
         }
 
-        public override void CreateComputerPlayer(int index, Game game)
+        internal override void CreateComputerPlayer(int index, Game game)
         {
             PlayerList[index] = new ComputerPlayer(game); //check if this works
             PlayerList[index].PlayerID = index + 1;
         }
-        private bool validateMove(int x, int y, string piece, int player)
+        private bool ValidateMove(int x, int y, string piece, int player)
         {
             bool playerMatch = false;
             int intPiece2 = int.Parse(piece);
@@ -100,13 +102,13 @@ namespace Tic_Tac_Toe_Assignment
             else { return false; }
         }
 
-        public override bool makeMove(Player player)
+        protected override bool MakeMove(Player player)
         {
             WriteLine("It's Player {0}'s turn.\n", player.PlayerID);
 
             if (player.GetType() == typeof(ComputerPlayer)) //if the player is a computer
             {
-                player.getMove();
+                player.GetMove();
                 return true;
             }
             else
@@ -124,7 +126,7 @@ namespace Tic_Tac_Toe_Assignment
                 while (!withinGrid || !xCheckType)
                 {
                     Write("Enter the row of your move:");
-                    player.getMove();
+                    player.GetMove();
                     xCheckType = int.TryParse(player.Input, out x);
 
                     if (!xCheckType)
@@ -146,7 +148,7 @@ namespace Tic_Tac_Toe_Assignment
                 while (!withinGrid || !yCheckType)
                 {
                     Write("Enter the column of your move:");
-                    player.getMove();
+                    player.GetMove();
                     yCheckType = int.TryParse(player.Input, out y);
 
                     if (!yCheckType)
@@ -168,7 +170,7 @@ namespace Tic_Tac_Toe_Assignment
                 while (!pieceCheckType)
                 {
                     Write("Enter the number you wish to place:");
-                    player.getMove();
+                    player.GetMove();
                     pieceCheckType = int.TryParse(player.Input, out piece);
                     if (!pieceCheckType)
                     {
@@ -177,7 +179,7 @@ namespace Tic_Tac_Toe_Assignment
                     }
                 }
 
-                if (!validateMove(x, y, player.Input, player.PlayerID))
+                if (!ValidateMove(x, y, player.Input, player.PlayerID))
                 {
                     WriteLine("\nThat was not a valid move. Either:\n" +
                         "- that move has been used, or\n" +
@@ -188,13 +190,13 @@ namespace Tic_Tac_Toe_Assignment
                 }
                 else
                 {
-                    gameboard.placePiece(x, y, player.Input);
+                    gameboard.PlacePiece(x, y, player.Input);
                     return turnSuccess = true;
                 }
             }
         }
 
-        public override void isGameOver()
+        protected override void CheckWinner()
         {
             int total = 0;
             //check horizontally for a win
@@ -239,10 +241,10 @@ namespace Tic_Tac_Toe_Assignment
         }
 
         //constructor
-        public NumericalTicTacToe()
+        internal NumericalTicTacToe()
         {
             gameboard = new Gameboard(HEIGHT_OF_GAMEBOARD, WIDTH_OF_GAMEBOARD);
-            PlayerList = new Player[PLAYERS_COUNT];
+            PlayerList = new Player[PlayersCount];
             helpS = new HelpSystem();
             helpS.GameRules = Rules;
             base.logger = new History();

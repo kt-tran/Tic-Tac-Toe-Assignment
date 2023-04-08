@@ -36,55 +36,55 @@ namespace Tic_Tac_Toe_Assignment
         private int turnCounter = 0;
 
         //properties
-        public int TurnCounter
+        private int TurnCounter
         {
             get; set;
         }
 
         //methods
-        public void startApp()
+        internal void StartApp()
         {
             WriteLine(WELCOME_MESSAGE);
 
-            requestGameMode();
-            requestPlayerType();
+            RequestGameMode();
+            RequestPlayerType();
         }
 
-        public void mainApp()
+        internal void MainApp()
         {
             while (!currentGame.IsGameOver)
             {
-                updateScreen();
+                UpdateScreen();
                 WriteLine("The number of turns that have been made are: {0}", TurnCounter);
                 TurnCounter += 1;
 
-                if (currentGame.PlayerList[currentGame.CurrentPlayerIndex].GetType() == typeof(HumanPlayer)) //if the player is a human
-                    menu();
+                if (currentGame.CurrentPlayer.GetType() == typeof(HumanPlayer)) //if the player is a human
+                    Menu();
                 else
-                    currentGame.gameTurn();
+                    currentGame.GameTurn();
 
-                updateScreen();
+                UpdateScreen();
             }
-            updateScreen();
-            WriteLine("The winner is player {0}. Congratulations! Well played.", currentGame.CurrentPlayerIndex + 1);
+            UpdateScreen();
+            WriteLine("The winner is player {0}. Congratulations! Well played.", currentGame.CurrentPlayer.PlayerID);
             WriteLine(LEAVE_GAME);
             Environment.Exit(0);
         }
-        private string updateScreen()
+        private string UpdateScreen()
         {
             WriteLine(currentGame.gameboard);
             return currentGame.gameboard.ToString();
         }
 
-        private void menu() //eventually implement undo & redo
+        private void Menu() //eventually implement undo & redo
         {
             bool playerQuit = false;
 
             while (!playerQuit)
             {
                 Write(MENU_MESSAGE);
-                currentGame.PlayerList[currentGame.CurrentPlayerIndex].getMove();
-                switch (currentGame.PlayerList[currentGame.CurrentPlayerIndex].Input)
+                currentGame.CurrentPlayer.GetMove();
+                switch (currentGame.CurrentPlayer.Input)
                 {
                     case QUIT:
                         playerQuit = true;
@@ -92,22 +92,22 @@ namespace Tic_Tac_Toe_Assignment
                         Environment.Exit(0);
                         break;
                     case HELP:
-                        currentGame.helpS.printWelcome();
-                        currentGame.PlayerList[currentGame.CurrentPlayerIndex].getMove();
-                        switch (currentGame.PlayerList[currentGame.CurrentPlayerIndex].Input)
+                        WriteLine(currentGame.helpS.Welcome);
+                        currentGame.CurrentPlayer.GetMove();
+                        switch (currentGame.CurrentPlayer.Input)
                         {
                             case "rules":
-                                currentGame.helpS.printRules();
+                                WriteLine(currentGame.helpS.GameRules);
                                 //how do I make it go back to the welcome screen??
                             case "moves":
-                                currentGame.helpS.printCommands();
+                                WriteLine(currentGame.helpS.AvailableCommands);
 
                             case "close":
                                 break;
                         }
                         break;
                     case REQUEST_MOVE:
-                        currentGame.gameTurn();
+                        currentGame.GameTurn();
                         return;
                     default:
                         WriteLine(INVALID_MOVE);
@@ -119,7 +119,7 @@ namespace Tic_Tac_Toe_Assignment
 
         }
 
-        private void requestGameMode()
+        private void RequestGameMode()
         {
             bool validPick = false;
             while (!validPick)
@@ -169,7 +169,7 @@ namespace Tic_Tac_Toe_Assignment
             }
         }
 
-        private void requestPlayerType()
+        private void RequestPlayerType()
         {
             bool validPick = false;
             while (!validPick)

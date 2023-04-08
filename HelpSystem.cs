@@ -23,28 +23,19 @@ namespace Tic_Tac_Toe_Assignment
         private string gameRules;
 
         //properties
-        public string Welcome { get { return WELCOME; } }
-        public string AvailableCommands
+        internal string Welcome 
+        { 
+            get { return WELCOME; } 
+        }
+        internal string AvailableCommands
         {
             get { return AVAILABLE_COMMANDS; }
         }
-        public string GameRules
+        internal string GameRules
         {
             get; set;
         }
         //methods
-        public string printWelcome()
-        {
-            return WELCOME;
-        }
-        public string printCommands()
-        {
-            return AvailableCommands;
-        }
-        public string printRules()
-        {
-            return GameRules;
-        }
 
         //constructor
     }

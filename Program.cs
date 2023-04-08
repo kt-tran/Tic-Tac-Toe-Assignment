@@ -11,8 +11,8 @@ namespace Tic_Tac_Toe_Assignment
         static void Main()
         {
             UserInterface UI = new UserInterface();
-            UI.startApp();
-            UI.mainApp();
+            UI.StartApp();
+            UI.MainApp();
         }
     }
 }

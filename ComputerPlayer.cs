@@ -12,12 +12,12 @@ namespace Tic_Tac_Toe_Assignment
         private Game computerGame;
 
         //properties
-        public override string Input //will not use this but is mandatory anyway
+        internal override string Input //will not use this but is mandatory anyway
         {
             get; set;
         }
         //methods
-        public override void getMove()
+        internal override void GetMove()
         {
             Random rnd = new Random(); //can potentially generate identical values due to default seed value being time-dependent
             bool correctPiece = false;
@@ -36,7 +36,7 @@ namespace Tic_Tac_Toe_Assignment
                 {
                     if (computerGame.gameboard.Board[x, y] == "0")
                     {
-                        computerGame.gameboard.placePiece(x, y, computerGame.Pieces[index]); //place on the first available spot found
+                        computerGame.gameboard.PlacePiece(x, y, computerGame.Pieces[index]); //place on the first available spot found
                         computerGame.Pieces[index] = "0"; //update list of available pieces
                         return;
                     }
@@ -44,7 +44,7 @@ namespace Tic_Tac_Toe_Assignment
             }
         }
         //constructor
-        public ComputerPlayer(Game game) 
+        internal ComputerPlayer(Game game) 
         {
             rnd = new Random();
             computerGame = game;

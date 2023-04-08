@@ -8,14 +8,14 @@ namespace Tic_Tac_Toe_Assignment
     {
         //fields
         //properties
-        public abstract string Input
+        internal abstract string Input
         {
             get; set;
         }
-        public int PlayerID { get; set; }
+        internal int PlayerID { get; set; }
 
         //methods
-        public abstract void getMove();
+        internal abstract void GetMove();
         //constructor
     }
 }
