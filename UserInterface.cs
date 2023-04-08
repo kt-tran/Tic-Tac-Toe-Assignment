@@ -92,7 +92,19 @@ namespace Tic_Tac_Toe_Assignment
                         Environment.Exit(0);
                         break;
                     case HELP:
-                        //helpSystem.printCommands(); 
+                        currentGame.helpS.printWelcome();
+                        currentGame.PlayerList[currentGame.CurrentPlayerIndex].getMove();
+                        switch (currentGame.PlayerList[currentGame.CurrentPlayerIndex].Input)
+                        {
+                            case "rules":
+                                currentGame.helpS.printRules();
+                                //how do I make it go back to the welcome screen??
+                            case "moves":
+                                currentGame.helpS.printCommands();
+
+                            case "close":
+                                break;
+                        }
                         break;
                     case REQUEST_MOVE:
                         currentGame.gameTurn();
