@@ -186,7 +186,7 @@ namespace Tic_Tac_Toe_Assignment
                     pieceCheckType = int.TryParse(player.Input, out piece);
                     if (!pieceCheckType)
                     {
-                        WriteLine("That was not a number between 1 and 9 (inclusive). Please try again.");
+                        WriteLine("That was not a number. Please try again.");
                         continue;
                     }
                 }
@@ -204,7 +204,7 @@ namespace Tic_Tac_Toe_Assignment
                 {
                     gameboard.PlacePiece(x, y, player.Input);
                     moveCounter++;
-                    SaveMove();
+                    SaveMove(piece.ToString());
                     return turnSuccess = true;
                 }
             }
@@ -254,24 +254,14 @@ namespace Tic_Tac_Toe_Assignment
             }
         }
 
-        internal void SaveMove()
+        internal void SaveMove(string piece)
         {
             boardHistory[moveCounter] = new Gameboard(gameboard.Board);
-            for (int i = 0; i < boardHistory.Length; i++)
+            pieceHistory[moveCounter] = piece;
+            for (int i = 0; i < pieceHistory.Length; i++)
             {
-                WriteLine(boardHistory[i]);
+                WriteLine(pieceHistory[i] + '\n');
             }
-/*            for (int i = 0; i < PieceHistory.GetLength(0); i++)
-            {
-                for (int j = 0; j < PieceHistory[i].GetLength(0); j++)
-                {
-                    if ([][] == "0")
-                    {
-                        [][] = Player piece
-                    }
-                }
-            }*/
-
         }
 
         internal void UndoMove()
