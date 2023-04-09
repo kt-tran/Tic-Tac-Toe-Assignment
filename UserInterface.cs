@@ -30,7 +30,9 @@ namespace Tic_Tac_Toe_Assignment
             "Your input:";
         private const string MENU_MESSAGE = "Please enter:\n" +
             "- 'place' to make a move,\n" +
-            "- 'help' for assistance, or\n" +
+            "- 'help' for assistance\n" +
+            "- 'undo' to undo your last move\n" +
+            "- 'redo' to redo your last undone move, or\n" +
             "- 'QUIT' to exit.\n\n" +
             "Your input:";
         private const string INVALID_MOVE = "That was an invalid input. Try again, or type '" + HELP + "' for more assistance.\n";
@@ -38,6 +40,8 @@ namespace Tic_Tac_Toe_Assignment
         private const string QUIT = "QUIT";
         private const string HELP = "help";
         private const string REQUEST_MOVE = "place";
+        private const string UNDO = "undo";
+        private const string REDO = "redo";
 
         //properties
         private int TurnCounter
@@ -90,6 +94,15 @@ namespace Tic_Tac_Toe_Assignment
                 currentGame.CurrentPlayer.GetMove();
                 switch (currentGame.CurrentPlayer.Input)
                 {
+                    case REDO:
+                        currentGame.RedoMove();
+                        return;
+                    case UNDO:
+                        WriteLine("Move has been undone.");
+                        currentGame.UndoMove();
+                        currentGame.UndoMove();
+                        WriteLine(currentGame.gameboard);
+                        break;
                     case QUIT:
                         playerQuit = true;
                         WriteLine(LEAVE_GAME);
@@ -124,7 +137,6 @@ namespace Tic_Tac_Toe_Assignment
                         break;
 
                 }
-
             }
 
         }

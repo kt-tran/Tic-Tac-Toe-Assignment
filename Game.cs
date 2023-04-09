@@ -4,6 +4,10 @@ using static System.Console;
 
 namespace Tic_Tac_Toe_Assignment
 {
+    /**
+     * Template class, manages main game loop and game dependent systems.
+     * Can be extended to create different types of games. 
+     */
     internal abstract class Game
     {
         //fields
@@ -60,7 +64,12 @@ namespace Tic_Tac_Toe_Assignment
         //methods
         protected abstract bool MakeMove(Player player);
 
+        internal abstract void UndoMove();
+
+        internal abstract void RedoMove();
+
         protected abstract void CheckWinner();
+
         internal void GameTurn()
         {
             bool turnComplete = false;

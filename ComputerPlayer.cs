@@ -20,11 +20,12 @@ namespace Tic_Tac_Toe_Assignment
         {
             Random rnd = new Random(); //can potentially generate identical values due to default seed value being time-dependent
             bool correctPiece = false;
+            int generatedPiece = 0;
             int index = 0;
             while (!correctPiece)
             {
                 index = rnd.Next(computerGame.Pieces.Length); //generate random indexes for pieces
-                int generatedPiece = int.Parse(computerGame.Pieces[index]);
+                generatedPiece = int.Parse(computerGame.Pieces[index]);
                 if (generatedPiece == 0) continue; // Check for 0
                 correctPiece = generatedPiece % 2 == PlayerID % 2;
             }
@@ -36,6 +37,7 @@ namespace Tic_Tac_Toe_Assignment
                     if (computerGame.gameboard.Board[x, y] == "0")
                     {
                         computerGame.gameboard.PlacePiece(x, y, computerGame.Pieces[index]); //place on the first available spot found
+                        Input = computerGame.Pieces[index]; // Need this for the save move
                         computerGame.Pieces[index] = "0"; //update list of available pieces
                         return;
                     }
