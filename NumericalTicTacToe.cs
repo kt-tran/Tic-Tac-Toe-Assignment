@@ -28,7 +28,7 @@ namespace Tic_Tac_Toe_Assignment
         {
             get; set;
         }
-        protected override int CurrentPlayerIndex
+        internal override int CurrentPlayerIndex
         {
             get; set;
         }

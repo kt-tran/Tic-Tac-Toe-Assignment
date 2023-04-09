@@ -135,9 +135,9 @@ namespace Tic_Tac_Toe_Assignment
             while (!validPick)
             {
                 Write(PICK_GAME);
-                string pickInput = ReadLine();
+                string request = ReadLine();
                 int choice;
-                validPick = int.TryParse(pickInput, out choice);
+                validPick = int.TryParse(request, out choice);
                 if (validPick)
                 {
                     if (choice == 1)
@@ -160,12 +160,12 @@ namespace Tic_Tac_Toe_Assignment
                 }
                 else
                 {
-                    if (pickInput == HELP)
+                    if (request == HELP)
                     {
                         //call help system
                         validPick = true; //TODO
                     }
-                    else if (pickInput == QUIT)
+                    else if (request == QUIT)
                     {
                         WriteLine("Goodbye!");
                         Environment.Exit(0);
@@ -242,7 +242,7 @@ namespace Tic_Tac_Toe_Assignment
                     case "1":
                         if (currentGame.logger.CheckSaveFile())
                         {
-                            currentGame.gameboard = currentGame.logger.LoadSaveFile();
+                            currentGame.logger.LoadSaveFile();
                             WriteLine("Previous game loaded successfully.");
                             validInput = true;
                         }
@@ -252,6 +252,7 @@ namespace Tic_Tac_Toe_Assignment
                     case "2":
                         WriteLine("You have selected to start a new game.");
                         currentGame.logger.MakeSaveFile();
+                        currentGame.logger.Log(currentGame.gameboard, 2); //log an empty board with player 2 as "last player" so next player will be player 1
                         validInput = true;
                         break;
                     case QUIT:

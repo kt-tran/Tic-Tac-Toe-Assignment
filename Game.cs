@@ -21,10 +21,10 @@ namespace Tic_Tac_Toe_Assignment
         {
             get; set;
         }
-        protected Player[] PlayerList
+        protected internal Player[] PlayerList
         {
             get { return playerList; }
-            set { playerList = value; }
+            protected set { playerList = value; }
         }
         internal abstract string[] Pieces
         {
@@ -35,7 +35,7 @@ namespace Tic_Tac_Toe_Assignment
             get;
         }
 
-        protected abstract int CurrentPlayerIndex
+        internal abstract int CurrentPlayerIndex
         {
             get; set;
         }
@@ -64,10 +64,12 @@ namespace Tic_Tac_Toe_Assignment
             {
                 turnComplete = MakeMove(PlayerList[CurrentPlayerIndex]);
             }
-            logger.Log(gameboard);
             CheckWinner();
-            if (!GameOver)
+            if (!GameOver) //does not log winning turn
+            {
+                logger.Log(gameboard, CurrentPlayer.PlayerID);
                 CurrentPlayerIndex = (CurrentPlayerIndex + 1) % PlayerList.Length;
+            }
         }
         internal abstract void CreateHumanPlayer(int index);
 

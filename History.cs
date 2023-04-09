@@ -11,6 +11,7 @@ namespace Tic_Tac_Toe_Assignment
         private const string SAVE_FILE_NAME = "Save_File.txt";
         private char DELIM_COLUMNS = ',';
         private char DELIM_ROWS = '|';
+        private char DELIM_PLAYER = '#';
         private Gameboard[] boardHistory = new Gameboard[9];
         private string[,] pieceHistory; 
         private Gameboard[] backupUndo;
@@ -44,7 +45,7 @@ namespace Tic_Tac_Toe_Assignment
             FileStream outFile = new FileStream(SAVE_FILE_NAME, FileMode.Create);
             outFile.Close();
         }
-        internal void Log(Gameboard currentboard)
+        internal void Log(Gameboard currentboard, int playerID)
         {
             FileStream outFile = File.Open(SAVE_FILE_NAME, FileMode.Open, FileAccess.Write);
             StreamWriter writer = new StreamWriter(outFile);
@@ -59,14 +60,18 @@ namespace Tic_Tac_Toe_Assignment
                 if (i < 2)
                     writer.Write(DELIM_ROWS);
             }
-            writer.Write(Environment.NewLine);
+            writer.Write(DELIM_PLAYER);
+            writer.Write(playerID);
             writer.Close();
         }
-        internal Gameboard LoadSaveFile()
+        internal void LoadSaveFile()
         {
             FileStream inFile = new FileStream(SAVE_FILE_NAME, FileMode.Open, FileAccess.Read);
             StreamReader reader = new StreamReader(inFile);
-            string boardIn = reader.ReadLine();
+            string boardAndPlayer = reader.ReadLine();
+            string[] bAndPlayer = boardAndPlayer.Split(DELIM_PLAYER);
+            string boardIn = bAndPlayer[0];
+            int lastPlayer = int.Parse(bAndPlayer[1]);
             string[,] reassembledBoard = new string[historyGame.GameboardHeight, historyGame.GameboardWidth];
             string[] rows;
             string[] columnsInRow;
@@ -79,14 +84,22 @@ namespace Tic_Tac_Toe_Assignment
                     for (int y = 0; y < reassembledBoard.GetLength(1); y++)
                     {
                         reassembledBoard[x, y] = columnsInRow[y];
+                        if (!(columnsInRow[y] == "0"))
+                        {
+                            for(int i = 0; i < historyGame.Pieces.Length; i++)
+                            {
+                                if (historyGame.Pieces[i] == columnsInRow[y])
+                                    historyGame.Pieces[i] = "0";
+                            }
+                        }
                     }
                 }
                 boardIn = reader.ReadLine();
             }
             reader.Close();
             inFile.Close();
-
-            return new Gameboard(reassembledBoard);
+            historyGame.gameboard = new Gameboard(reassembledBoard);
+            historyGame.CurrentPlayerIndex = lastPlayer % historyGame.PlayerList.Length;
         }
 
         internal bool CheckSaveFile()
