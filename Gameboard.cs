@@ -50,6 +50,10 @@ namespace Tic_Tac_Toe_Assignment
 
             }
         }
+        internal Gameboard(string[,] SaveFileBoard)
+        {
+            board = SaveFileBoard;
+        }
 
 
     }

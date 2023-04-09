@@ -43,6 +43,16 @@ namespace Tic_Tac_Toe_Assignment
         internal abstract Player CurrentPlayer
         { get; }
 
+        internal abstract int GameboardHeight
+        {
+            get;
+        }
+
+        internal abstract int GameboardWidth
+        {
+            get;
+        }
+
         //methods
         protected abstract bool MakeMove(Player player);
 

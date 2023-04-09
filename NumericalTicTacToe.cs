@@ -14,6 +14,16 @@ namespace Tic_Tac_Toe_Assignment
 
 
         //properties
+        internal override int GameboardHeight
+        {
+            get { return HEIGHT_OF_GAMEBOARD; }
+        }
+
+        internal override int GameboardWidth
+        {
+            get { return WIDTH_OF_GAMEBOARD;  }
+        }
+
         internal override bool GameOver
         {
             get; set;
@@ -247,8 +257,7 @@ namespace Tic_Tac_Toe_Assignment
             PlayerList = new Player[PlayersCount];
             helpS = new HelpSystem();
             helpS.GameRules = Rules;
-            base.logger = new History();
-            base.logger.MakeSaveFile();
+            base.logger = new History(this);
         }
     }
 }

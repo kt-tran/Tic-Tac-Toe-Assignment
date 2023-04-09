@@ -8,11 +8,12 @@ namespace Tic_Tac_Toe_Assignment
     {
         //implement switching game modes later
         private Game currentGame;
+        private bool playerQuit = false;
+        private bool validInput = false;
 
         //fields
         private const string WELCOME_MESSAGE = "++++++++++++++++++++++++++++++++++++++++++++++\n" +
             "Welcome to Katie Tran's game application!\n" +
-            "You can enter 'QUIT' to exit at any time.\n" +
             "Enjoy :)\n" +
             "++++++++++++++++++++++++++++++++++++++++++++++\n";
         private const string PICK_GAME = "What game would you like to play?\n" +
@@ -23,6 +24,10 @@ namespace Tic_Tac_Toe_Assignment
             "1) Human vs Human\n" +
             "2) Computer vs Human\n\n" +
             "I would like to play:";
+        private const string ASK_LOAD_SAVE = "Would you like to continue the game from last time?\n" +
+            "1) Yes\n" +
+            "2) No\n" +
+            "Your input:";
         private const string MENU_MESSAGE = "Please enter:\n" +
             "- 'place' to make a move,\n" +
             "- 'help' for assistance, or\n" +
@@ -47,6 +52,8 @@ namespace Tic_Tac_Toe_Assignment
 
             RequestGameMode();
             RequestPlayerType();
+            RequestLoadSave();
+
         }
 
         internal void MainApp()
@@ -77,8 +84,6 @@ namespace Tic_Tac_Toe_Assignment
 
         private void Menu() //eventually implement undo & redo
         {
-            bool playerQuit = false;
-
             while (!playerQuit)
             {
                 Write(MENU_MESSAGE);
@@ -222,6 +227,40 @@ namespace Tic_Tac_Toe_Assignment
                         WriteLine(INVALID_MOVE);
                     }
 
+                }
+            }
+        }
+
+        private void RequestLoadSave()
+        {
+            while (!playerQuit && !validInput)
+            {
+                Write(ASK_LOAD_SAVE);
+                currentGame.CurrentPlayer.GetMove();
+                switch (currentGame.CurrentPlayer.Input)
+                {
+                    case "1":
+                        if (currentGame.logger.CheckSaveFile())
+                        {
+                            currentGame.gameboard = currentGame.logger.LoadSaveFile();
+                            WriteLine("Previous game loaded successfully.");
+                            validInput = true;
+                        }
+                        else
+                            WriteLine("A save file does not exist. Previous game not found.");
+                        break;
+                    case "2":
+                        WriteLine("You have selected to start a new game.");
+                        currentGame.logger.MakeSaveFile();
+                        validInput = true;
+                        break;
+                    case QUIT:
+                        WriteLine("Goodbye!");
+                        Environment.Exit(0);
+                        break; //won't reach this but syntactically required
+                    default:
+                        WriteLine(INVALID_MOVE);
+                        break;
                 }
             }
         }
