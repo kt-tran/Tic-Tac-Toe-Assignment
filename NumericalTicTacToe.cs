@@ -11,9 +11,10 @@ namespace Tic_Tac_Toe_Assignment
         private const int WIDTH_OF_GAMEBOARD = 3;
         private const int WIN_TOTAL = 15;
         private string[] NTTpieces = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-
+        private int moveCounter = 0;
 
         //properties
+
         internal override int GameboardHeight
         {
             get { return HEIGHT_OF_GAMEBOARD; }
@@ -119,6 +120,7 @@ namespace Tic_Tac_Toe_Assignment
             if (player.GetType() == typeof(ComputerPlayer)) //if the player is a computer
             {
                 player.GetMove();
+                moveCounter++;
                 return true;
             }
             else
@@ -201,6 +203,8 @@ namespace Tic_Tac_Toe_Assignment
                 else
                 {
                     gameboard.PlacePiece(x, y, player.Input);
+                    moveCounter++;
+                    SaveMove();
                     return turnSuccess = true;
                 }
             }
@@ -250,6 +254,36 @@ namespace Tic_Tac_Toe_Assignment
             }
         }
 
+        internal void SaveMove()
+        {
+            boardHistory[moveCounter] = new Gameboard(gameboard.Board);
+            for (int i = 0; i < boardHistory.Length; i++)
+            {
+                WriteLine(boardHistory[i]);
+            }
+/*            for (int i = 0; i < PieceHistory.GetLength(0); i++)
+            {
+                for (int j = 0; j < PieceHistory[i].GetLength(0); j++)
+                {
+                    if ([][] == "0")
+                    {
+                        [][] = Player piece
+                    }
+                }
+            }*/
+
+        }
+
+        internal void UndoMove()
+        {
+
+        }
+
+        internal void RedoMove()
+        {
+
+        }
+
         //constructor
         internal NumericalTicTacToe()
         {
@@ -257,7 +291,14 @@ namespace Tic_Tac_Toe_Assignment
             PlayerList = new Player[PlayersCount];
             helpS = new HelpSystem();
             helpS.GameRules = Rules;
-            base.logger = new History(this);
+
+            boardHistory = new Gameboard[GameboardHeight * GameboardWidth];
+            boardRedo = new Gameboard[GameboardHeight * GameboardWidth];
+
+            pieceHistory = new string[NTTpieces.Length];
+            pieceRedo = new string[NTTpieces.Length]; 
+
+            base.logger = new History(this); // Not sure where else to put this
         }
     }
 }

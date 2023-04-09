@@ -11,6 +11,10 @@ namespace Tic_Tac_Toe_Assignment
         public Gameboard gameboard;
         public HelpSystem helpS;
         public History logger;
+        protected Gameboard[] boardHistory;
+        protected Gameboard[] boardRedo;
+        protected string[] pieceHistory;
+        protected string[] pieceRedo;
 
         //properties
         protected abstract int PlayersCount
@@ -67,7 +71,7 @@ namespace Tic_Tac_Toe_Assignment
             CheckWinner();
             if (!GameOver) //does not log winning turn
             {
-                logger.Log(gameboard, CurrentPlayer.PlayerID);
+                logger.SaveToFile(gameboard, CurrentPlayer.PlayerID);
                 CurrentPlayerIndex = (CurrentPlayerIndex + 1) % PlayerList.Length;
             }
         }

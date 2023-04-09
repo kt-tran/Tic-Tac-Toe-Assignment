@@ -252,7 +252,7 @@ namespace Tic_Tac_Toe_Assignment
                     case "2":
                         WriteLine("You have selected to start a new game.");
                         currentGame.logger.MakeSaveFile();
-                        currentGame.logger.Log(currentGame.gameboard, 2); //log an empty board with player 2 as "last player" so next player will be player 1
+                        currentGame.logger.SaveToFile(currentGame.gameboard, 2); //log an empty board with player 2 as "last player" so next player will be player 1
                         validInput = true;
                         break;
                     case QUIT:

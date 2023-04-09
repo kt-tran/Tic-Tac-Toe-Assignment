@@ -13,39 +13,16 @@ namespace Tic_Tac_Toe_Assignment
         private char DELIM_ROWS = '|';
         private char DELIM_PLAYER = '#';
         private Gameboard[] boardHistory = new Gameboard[9];
-        private string[,] pieceHistory; 
-        private Gameboard[] backupUndo;
-        private Gameboard[] backupRedo;
 
         //properties
-        public string[,] PieceHistory
-        {
-            get { return pieceHistory; }
-            set { pieceHistory = value; }
-        }
-        public Gameboard[] BoardHistory
-        {
-            get { return boardHistory; }
-            set { boardHistory = value; }
-        }
-        public Gameboard[] BackupUndo
-        {
-            get { return backupUndo; }
-            set { backupUndo = value; }
-        }
 
-        public Gameboard[] BackupRedo
-        {
-            get { return backupRedo; }
-            set { backupRedo = value; }
-        }
         //methods
         internal void MakeSaveFile()
         {
             FileStream outFile = new FileStream(SAVE_FILE_NAME, FileMode.Create);
             outFile.Close();
         }
-        internal void Log(Gameboard currentboard, int playerID)
+        internal void SaveToFile(Gameboard currentboard, int playerID)
         {
             FileStream outFile = File.Open(SAVE_FILE_NAME, FileMode.Open, FileAccess.Write);
             StreamWriter writer = new StreamWriter(outFile);
@@ -108,6 +85,8 @@ namespace Tic_Tac_Toe_Assignment
             return fInfo.Exists;
 
         }
+
+        
         //constructor
         internal History(Game game)
         {

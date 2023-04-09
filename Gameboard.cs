@@ -52,9 +52,16 @@ namespace Tic_Tac_Toe_Assignment
         }
         internal Gameboard(string[,] SaveFileBoard)
         {
-            board = SaveFileBoard;
+            // board = SaveFileBoard
+            board = new string[SaveFileBoard.GetLength(0), SaveFileBoard.GetLength(1)];
+
+            for (int i = 0; i < board.GetLength(0); i++)
+            {
+                for (int j = 0; j < board.GetLength(1); j++)
+                {
+                    board[i, j] = SaveFileBoard[i, j];
+                }
+            }
         }
-
-
     }
 }

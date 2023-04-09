@@ -45,7 +45,6 @@ namespace Tic_Tac_Toe_Assignment
         //constructor
         internal ComputerPlayer(Game game) 
         {
-            Random rnd = new Random();
             computerGame = game;
         }
     }
