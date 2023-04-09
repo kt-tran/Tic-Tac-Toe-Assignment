@@ -4,6 +4,10 @@ using static System.Console;
 
 namespace Tic_Tac_Toe_Assignment
 {
+    /// <summary>
+    /// The numerical tic tac toe game type.
+    /// Implements the Game class to give the NTT game
+    /// </summary>
     internal class NumericalTicTacToe : Game
     {
         //fields
@@ -15,7 +19,6 @@ namespace Tic_Tac_Toe_Assignment
         private int undoCounter = 0;
 
         //properties
-
         internal override int GameboardHeight
         {
             get { return HEIGHT_OF_GAMEBOARD; }
@@ -76,17 +79,37 @@ namespace Tic_Tac_Toe_Assignment
             get { return 2; }
         }
         //methods
+
+        /// <summary>
+        /// Creates a human player
+        /// </summary>
+        /// <param name="index">Index in the player array where the player will be placed</param>
         internal override void CreateHumanPlayer(int index)
         {
             PlayerList[index] = new HumanPlayer();
             PlayerList[index].PlayerID = index + 1;
         }
 
+        /// <summary>
+        /// Creates a computer player
+        /// </summary>
+        /// <param name="index">Index in the player array where the player will be placed</param>
+        /// <param name="game">The current game, so that the computer may generate moves</param>
         internal override void CreateComputerPlayer(int index, Game game)
         {
             PlayerList[index] = new ComputerPlayer(game); //check if this works
             PlayerList[index].PlayerID = index + 1;
         }
+
+        /// <summary>
+        /// Validates move made by player abides by game rules.
+        /// Ensures pieces used are correct and are able to be used.
+        /// </summary>
+        /// <param name="x">Row of the gameboard</param>
+        /// <param name="y">Column of the gameboard</param>
+        /// <param name="piece">Piece to be placed by player</param>
+        /// <param name="player">Player who made the move</param>
+        /// <returns>True if the move is valid, false otherwise</returns>
         private bool ValidateMove(int x, int y, string piece, int player)
         {
             bool playerMatch = false;
@@ -114,6 +137,11 @@ namespace Tic_Tac_Toe_Assignment
             else { return false; }
         }
 
+        /// <summary>
+        /// Gets player move and ensures all types are correct and within gameboard bounds.
+        /// </summary>
+        /// <param name="player">Player making the move</param>
+        /// <returns>True if move was made successfully, false otherwise</returns>
         protected override bool MakeMove(Player player)
         {
             WriteLine("It's Player {0}'s turn.\n", player.PlayerID);
@@ -212,6 +240,9 @@ namespace Tic_Tac_Toe_Assignment
             }
         }
 
+        /// <summary>
+        /// Algorithm for checking the winner of the Tic Tac Toe game by checking for winning line.
+        /// </summary>
         protected override void CheckWinner()
         {
             int total = 0;
@@ -255,6 +286,11 @@ namespace Tic_Tac_Toe_Assignment
                     GameOver = true;
             }
         }
+
+        /// <summary>
+        /// Saves move for use in the undo/redo system
+        /// </summary>
+        /// <param name="piece">Piece to be saved</param>
         private void SaveMove(string piece)
         {
             boardHistory[moveCounter] = new Gameboard(gameboard.Board);
@@ -262,6 +298,9 @@ namespace Tic_Tac_Toe_Assignment
             moveCounter++;
         }
 
+        /// <summary>
+        /// Undoes a move, will also build the redo move array
+        /// </summary>
         internal override void UndoMove()
         {
             if (moveCounter == 1)
@@ -288,7 +327,9 @@ namespace Tic_Tac_Toe_Assignment
                 CurrentPlayerIndex = (CurrentPlayerIndex + 1) % PlayerList.Length;
             }
         }
-
+        /// <summary>
+        /// Redoes a previously undone move
+        /// </summary>
         internal override void RedoMove()
         {
             if (undoCounter == 0)
@@ -313,6 +354,9 @@ namespace Tic_Tac_Toe_Assignment
             }
         }
 
+        /// <summary>
+        /// Clears the redo list, necessary after a player move
+        /// </summary>
         private void ClearRedoList()
         {
             undoCounter = 0;

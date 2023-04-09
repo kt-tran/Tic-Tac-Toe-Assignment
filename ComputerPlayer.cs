@@ -5,6 +5,9 @@ using static System.Console;
 
 namespace Tic_Tac_Toe_Assignment
 {
+    /// <summary>
+    /// Basic computer player class
+    /// </summary>
     internal class ComputerPlayer : Player
     {
         //fields
@@ -16,6 +19,9 @@ namespace Tic_Tac_Toe_Assignment
             get; set;
         }
         //methods
+        /// <summary>
+        /// Generates a random move and places it onto the gameboard
+        /// </summary>
         internal override void GetMove()
         {
             Random rnd = new Random(); //can potentially generate identical values due to default seed value being time-dependent

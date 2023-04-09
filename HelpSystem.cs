@@ -4,6 +4,9 @@ using static System.Console;
 
 namespace Tic_Tac_Toe_Assignment
 {
+    /// <summary>
+    /// Help system for player convenience, contains information about the game and how to use the application.
+    /// </summary>
     internal class HelpSystem
     {
         //fields

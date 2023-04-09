@@ -4,6 +4,9 @@ using static System.Console;
 
 namespace Tic_Tac_Toe_Assignment
 {
+    /// <summary>
+    /// Class which manages the Save file functionality of the program
+    /// </summary>
     internal class History
     {
         //fields
@@ -17,11 +20,20 @@ namespace Tic_Tac_Toe_Assignment
         //properties
 
         //methods
+        /// <summary>
+        /// Creates a save file
+        /// </summary>
         internal void MakeSaveFile()
         {
             FileStream outFile = new FileStream(SAVE_FILE_NAME, FileMode.Create);
             outFile.Close();
         }
+
+        /// <summary>
+        /// Saves current state of the game to the save file
+        /// </summary>
+        /// <param name="currentboard">Current gameboard</param>
+        /// <param name="playerID">Current playerID</param>
         internal void SaveToFile(Gameboard currentboard, int playerID)
         {
             FileStream outFile = File.Open(SAVE_FILE_NAME, FileMode.Open, FileAccess.Write);
@@ -41,6 +53,10 @@ namespace Tic_Tac_Toe_Assignment
             writer.Write(playerID);
             writer.Close();
         }
+
+        /// <summary>
+        /// Loads game from save file
+        /// </summary>
         internal void LoadSaveFile()
         {
             FileStream inFile = new FileStream(SAVE_FILE_NAME, FileMode.Open, FileAccess.Read);
@@ -79,6 +95,10 @@ namespace Tic_Tac_Toe_Assignment
             historyGame.CurrentPlayerIndex = lastPlayer % historyGame.PlayerList.Length;
         }
 
+        /// <summary>
+        /// Checks if save file exists
+        /// </summary>
+        /// <returns>True if file found, false otherwise</returns>
         internal bool CheckSaveFile()
         {
             FileInfo fInfo = new FileInfo(SAVE_FILE_NAME);

@@ -50,6 +50,9 @@ namespace Tic_Tac_Toe_Assignment
         }
 
         //methods
+        /// <summary>
+        /// Begins the game, querying the user for initial configuration
+        /// </summary>
         internal void StartApp()
         {
             WriteLine(WELCOME_MESSAGE);
@@ -60,6 +63,9 @@ namespace Tic_Tac_Toe_Assignment
 
         }
 
+        /// <summary>
+        /// Main loop of the game, will check if the game is over and displays the current state of the board.
+        /// </summary>
         internal void MainApp()
         {
             while (!currentGame.GameOver)
@@ -80,12 +86,20 @@ namespace Tic_Tac_Toe_Assignment
             WriteLine(LEAVE_GAME);
             Environment.Exit(0);
         }
+
+        /// <summary>
+        /// Returns the state of the gameboard
+        /// </summary>
+        /// <returns></returns>
         private string UpdateScreen()
         {
             WriteLine(currentGame.gameboard);
             return currentGame.gameboard.ToString();
         }
 
+        /// <summary>
+        /// Displays options for user to play game, get help, quit, etc...
+        /// </summary>
         private void Menu() //eventually implement undo & redo
         {
             while (!playerQuit)
@@ -141,6 +155,9 @@ namespace Tic_Tac_Toe_Assignment
 
         }
 
+        /// <summary>
+        /// Queries user for game mode
+        /// </summary>
         private void RequestGameMode()
         {
             bool validPick = false;
@@ -191,6 +208,10 @@ namespace Tic_Tac_Toe_Assignment
             }
         }
 
+
+        /// <summary>
+        /// Asks user which player types they would like for their game.
+        /// </summary>
         private void RequestPlayerType()
         {
             bool validPick = false;
@@ -243,6 +264,9 @@ namespace Tic_Tac_Toe_Assignment
             }
         }
 
+        /// <summary>
+        /// Queries player if they would like to load previous save.
+        /// </summary>
         private void RequestLoadSave()
         {
             while (!playerQuit && !validInput)

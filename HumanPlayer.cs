@@ -4,6 +4,9 @@ using static System.Console;
 
 namespace Tic_Tac_Toe_Assignment
 {
+    /// <summary>
+    /// Human player class 
+    /// </summary>
     internal class HumanPlayer : Player
     {
         //fields
