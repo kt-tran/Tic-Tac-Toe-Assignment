@@ -44,10 +44,6 @@ namespace Tic_Tac_Toe_Assignment
         private const string REDO = "redo";
 
         //properties
-        private int TurnCounter
-        {
-            get; set;
-        }
 
         //methods
         /// <summary>
@@ -71,8 +67,6 @@ namespace Tic_Tac_Toe_Assignment
             while (!currentGame.GameOver)
             {
                 UpdateScreen();
-                WriteLine("The number of turns that have been made are: {0}", TurnCounter);
-                TurnCounter += 1;
 
                 if (currentGame.CurrentPlayer.GetType() == typeof(HumanPlayer)) //if the player is a human
                     Menu();
@@ -80,6 +74,7 @@ namespace Tic_Tac_Toe_Assignment
                     currentGame.GameTurn();
 
                 UpdateScreen();
+                WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             }
             UpdateScreen();
             WriteLine("The winner is player {0}. Congratulations! Well played.", currentGame.CurrentPlayer.PlayerID);
@@ -100,7 +95,7 @@ namespace Tic_Tac_Toe_Assignment
         /// <summary>
         /// Displays options for user to play game, get help, quit, etc...
         /// </summary>
-        private void Menu() //eventually implement undo & redo
+        private void Menu()
         {
             while (!playerQuit)
             {
@@ -112,8 +107,6 @@ namespace Tic_Tac_Toe_Assignment
                         currentGame.RedoMove();
                         return;
                     case UNDO:
-                        WriteLine("Move has been undone.");
-                        currentGame.UndoMove();
                         currentGame.UndoMove();
                         WriteLine(currentGame.gameboard);
                         break;
@@ -228,6 +221,7 @@ namespace Tic_Tac_Toe_Assignment
                         validPick = true;
                         currentGame.CreateHumanPlayer(0);
                         currentGame.CreateHumanPlayer(1);
+                        currentGame.GamePlayerMode = "Human";
                     }
                     else if (choice == 2)
                     {
@@ -235,6 +229,7 @@ namespace Tic_Tac_Toe_Assignment
                         validPick = true;
                         currentGame.CreateHumanPlayer(0);
                         currentGame.CreateComputerPlayer(1, currentGame);
+                        currentGame.GamePlayerMode = "Computer";
                     }
                     else
                     {

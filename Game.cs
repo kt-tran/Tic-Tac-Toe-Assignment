@@ -21,6 +21,14 @@ namespace Tic_Tac_Toe_Assignment
         protected string[] pieceRedo;
 
         //properties
+        internal abstract Gameboard[] BoardHistory
+        {
+            get; set;
+        }
+        internal abstract string GamePlayerMode
+        {
+            get; set;
+        }
         protected abstract int PlayersCount
         {
             get;

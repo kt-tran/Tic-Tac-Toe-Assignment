@@ -15,10 +15,19 @@ namespace Tic_Tac_Toe_Assignment
         private const int WIDTH_OF_GAMEBOARD = 3;
         private const int WIN_TOTAL = 15;
         private string[] NTTpieces = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-        private int moveCounter = 1;
+        private string gamePlayerMode = "";
+        private int moveCounter = 0;
         private int undoCounter = 0;
 
         //properties
+        internal override Gameboard[] BoardHistory
+        {
+            get; set;
+        }
+        internal override string GamePlayerMode
+        {
+            get; set;
+        }
         internal override int GameboardHeight
         {
             get { return HEIGHT_OF_GAMEBOARD; }
@@ -293,9 +302,9 @@ namespace Tic_Tac_Toe_Assignment
         /// <param name="piece">Piece to be saved</param>
         private void SaveMove(string piece)
         {
-            boardHistory[moveCounter] = new Gameboard(gameboard.Board);
-            pieceHistory[moveCounter-1] = piece;
             moveCounter++;
+            BoardHistory[moveCounter] = new Gameboard(gameboard.Board);
+            pieceHistory[moveCounter - 1] = piece;
         }
 
         /// <summary>
@@ -303,28 +312,39 @@ namespace Tic_Tac_Toe_Assignment
         /// </summary>
         internal override void UndoMove()
         {
-            if (moveCounter == 1)
+            if (moveCounter == 0)
             {
                 WriteLine("No moves have been made, cannot undo!");
             }
             else
             {
-                boardRedo[undoCounter] = new Gameboard(gameboard.Board);
-                pieceRedo[undoCounter] = pieceHistory[moveCounter - 2];
-                undoCounter++;
-
-                moveCounter--;
-                gameboard = new Gameboard(boardHistory[moveCounter - 1].Board);
-                for (int i = 0; i < NTTpieces.Length; i++)
+                if (GamePlayerMode == "Computer")
                 {
-                    if (NTTpieces[i] == "0")
+                    for (int z = 0; z < 2; z++)
                     {
-                        NTTpieces[i] = pieceHistory[moveCounter - 1];
-                        break;
+                        moveCounter--;
+                        boardRedo[undoCounter] = new Gameboard(gameboard.Board); // Saves board to redo stack
+                        pieceRedo[undoCounter] = pieceHistory[moveCounter]; // Saves piece to redo stack
+                        undoCounter++;
+
+                        gameboard = new Gameboard(BoardHistory[moveCounter].Board); //restore previous board
+                        for (int i = 0; i < NTTpieces.Length; i++)
+                        {
+                            if (NTTpieces[i] == "0")
+                            {
+                                NTTpieces[i] = pieceHistory[moveCounter];
+                                break;
+                            }
+                        }
+                        logger.SaveToFile(gameboard, CurrentPlayer.PlayerID);
+                        CurrentPlayerIndex--;
+                        if (CurrentPlayerIndex < 0)
+                            CurrentPlayerIndex = PlayerList.Length - 1; //decrement player
                     }
+                    WriteLine("Your move was successfully undone.");
                 }
-                logger.SaveToFile(gameboard, CurrentPlayer.PlayerID);
-                CurrentPlayerIndex = (CurrentPlayerIndex + 1) % PlayerList.Length;
+                else
+                    WriteLine("Undo is not available for player versus player mode.");
             }
         }
         /// <summary>
@@ -349,7 +369,7 @@ namespace Tic_Tac_Toe_Assignment
                     }
                 }
                 logger.SaveToFile(gameboard, CurrentPlayer.PlayerID);
-                CurrentPlayerIndex = (CurrentPlayerIndex + 1) % PlayerList.Length;
+                CurrentPlayerIndex = (CurrentPlayerIndex + 1) % PlayerList.Length; //increment player
                 SaveMove(pieceRedo[undoCounter]);
             }
         }
@@ -370,8 +390,8 @@ namespace Tic_Tac_Toe_Assignment
             helpS = new HelpSystem();
             helpS.GameRules = Rules;
 
-            boardHistory = new Gameboard[GameboardHeight * GameboardWidth + 1];
-            boardHistory[0] = new Gameboard(GameboardHeight, GameboardWidth);
+            BoardHistory = new Gameboard[GameboardHeight * GameboardWidth + 1]; // 10 to include empty starting board
+            BoardHistory[moveCounter] = new Gameboard(GameboardHeight, GameboardWidth); 
             boardRedo = new Gameboard[GameboardHeight * GameboardWidth + 1];
 
             pieceHistory = new string[NTTpieces.Length];

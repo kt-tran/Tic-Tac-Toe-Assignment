@@ -92,6 +92,7 @@ namespace Tic_Tac_Toe_Assignment
             reader.Close();
             inFile.Close();
             historyGame.gameboard = new Gameboard(reassembledBoard);
+            historyGame.BoardHistory[0] = new Gameboard(reassembledBoard);
             historyGame.CurrentPlayerIndex = lastPlayer % historyGame.PlayerList.Length;
         }
 
