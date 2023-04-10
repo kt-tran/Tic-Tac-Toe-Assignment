@@ -88,6 +88,7 @@ namespace Tic_Tac_Toe_Assignment
         {
             get { return 2; }
         }
+
         //methods
 
         /// <summary>
@@ -152,7 +153,7 @@ namespace Tic_Tac_Toe_Assignment
         /// </summary>
         /// <param name="player">The move making player</param>
         /// <returns>Valid row</returns>
-        private int checkRow(Player player) 
+        private int CheckRow(Player player) 
         {
             bool xCheckType;
             while (true)
@@ -181,7 +182,7 @@ namespace Tic_Tac_Toe_Assignment
         /// </summary>
         /// <param name="player">The move making player</param>
         /// <returns>Valid column</returns>
-        private int checkColumn(Player player)
+        private int CheckColumn(Player player)
         {
             bool yCheckType;
             while (true)
@@ -209,7 +210,7 @@ namespace Tic_Tac_Toe_Assignment
         /// Checks that the piece is an int
         /// </summary>
         /// <param name="player">The move making player</param>
-        private void checkPiece(Player player)
+        private void CheckPiece(Player player)
         {
             while (true)
             {
@@ -240,9 +241,9 @@ namespace Tic_Tac_Toe_Assignment
             }
             bool turnSuccess = false;
 
-            int x = checkRow(player);
-            int y = checkColumn(player);
-            checkPiece(player);
+            int x = CheckRow(player);
+            int y = CheckColumn(player);
+            CheckPiece(player);
 
             if (!ValidateMove(x, y, player.Input, player.PlayerID))
             {

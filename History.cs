@@ -10,12 +10,11 @@ namespace Tic_Tac_Toe_Assignment
     internal class History
     {
         //fields
-        private Game historyGame;
+        private Game game;
         private const string SAVE_FILE_NAME = "Save_File.txt";
         private char DELIM_COLUMNS = ',';
         private char DELIM_ROWS = '|';
         private char DELIM_PLAYER = '#';
-        private Gameboard[] boardHistory = new Gameboard[9];
 
         //properties
 
@@ -65,7 +64,7 @@ namespace Tic_Tac_Toe_Assignment
             string[] bAndPlayer = boardAndPlayer.Split(DELIM_PLAYER);
             string boardIn = bAndPlayer[0];
             int lastPlayer = int.Parse(bAndPlayer[1]);
-            string[,] reassembledBoard = new string[historyGame.GameboardHeight, historyGame.GameboardWidth];
+            string[,] reassembledBoard = new string[game.GameboardHeight, game.GameboardWidth];
             string[] rows;
             string[] columnsInRow;
             while (boardIn != null)
@@ -79,10 +78,10 @@ namespace Tic_Tac_Toe_Assignment
                         reassembledBoard[x, y] = columnsInRow[y];
                         if (!(columnsInRow[y] == "0"))
                         {
-                            for(int i = 0; i < historyGame.Pieces.Length; i++)
+                            for(int i = 0; i < game.Pieces.Length; i++)
                             {
-                                if (historyGame.Pieces[i] == columnsInRow[y])
-                                    historyGame.Pieces[i] = "0";
+                                if (game.Pieces[i] == columnsInRow[y])
+                                    game.Pieces[i] = "0";
                             }
                         }
                     }
@@ -91,9 +90,9 @@ namespace Tic_Tac_Toe_Assignment
             }
             reader.Close();
             inFile.Close();
-            historyGame.gameboard = new Gameboard(reassembledBoard);
-            historyGame.BoardHistory[0] = new Gameboard(reassembledBoard);
-            historyGame.CurrentPlayerIndex = lastPlayer % historyGame.PlayerList.Length;
+            game.gameboard = new Gameboard(reassembledBoard);
+            game.BoardHistory[0] = new Gameboard(reassembledBoard);
+            game.CurrentPlayerIndex = lastPlayer % game.PlayerList.Length;
         }
 
         /// <summary>
@@ -111,7 +110,7 @@ namespace Tic_Tac_Toe_Assignment
         //constructor
         internal History(Game game)
         {
-            historyGame = game;
+            this.game = game;
         }
     }
 }
