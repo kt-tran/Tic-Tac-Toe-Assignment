@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Numerics;
 using static System.Console;
 
 namespace Tic_Tac_Toe_Assignment
@@ -147,6 +148,82 @@ namespace Tic_Tac_Toe_Assignment
         }
 
         /// <summary>
+        /// Checks that the row input is within the board and is an int
+        /// </summary>
+        /// <param name="player">The move making player</param>
+        /// <returns>Valid row</returns>
+        private int checkRow(Player player) 
+        {
+            bool xCheckType;
+            while (true)
+            {
+                Write("Enter the row of your move:");
+                player.GetMove();
+                xCheckType = int.TryParse(player.Input, out int x);
+
+                if (!xCheckType)
+                {
+                    WriteLine("That was not an integer. Please try again.");
+                    continue;
+                }
+
+                if (x > WIDTH_OF_GAMEBOARD || x < 1)
+                {
+                    WriteLine("That is outside of the board. Please try again.");
+                    continue;
+                }
+                return x -= 1;
+            }
+        }
+
+        /// <summary>
+        /// Checks that the column input is within the board and is an int
+        /// </summary>
+        /// <param name="player">The move making player</param>
+        /// <returns>Valid column</returns>
+        private int checkColumn(Player player)
+        {
+            bool yCheckType;
+            while (true)
+            {
+                Write("Enter the column of your move:");
+                player.GetMove();
+                yCheckType = int.TryParse(player.Input, out int y);
+
+                if (!yCheckType)
+                {
+                    WriteLine("That was not an integer. Please try again.");
+                    continue;
+                }
+
+                if (y > HEIGHT_OF_GAMEBOARD || y < 1)
+                {
+                    WriteLine("That is outside of the board. Please try again.");
+                    continue;
+                }
+                return y -= 1;
+            }
+        }
+
+        /// <summary>
+        /// Checks that the piece is an int
+        /// </summary>
+        /// <param name="player">The move making player</param>
+        private void checkPiece(Player player)
+        {
+            while (true)
+            {
+                Write("Enter the number you wish to place:");
+                player.GetMove();
+                bool pieceCheckType = int.TryParse(player.Input, out _);
+                if (pieceCheckType)
+                {
+                    return;
+                }
+                WriteLine("That was not a number. Please try again.");
+            }
+        }
+        /// <summary>
         /// Gets player move and ensures all types are correct and within gameboard bounds.
         /// </summary>
         /// <param name="player">Player making the move</param>
@@ -159,94 +236,27 @@ namespace Tic_Tac_Toe_Assignment
             {
                 player.GetMove();
                 SaveMove(player.Input);
-                // ClearRedoList();
                 return true;
             }
-            else
+            bool turnSuccess = false;
+
+            int x = checkRow(player);
+            int y = checkColumn(player);
+            checkPiece(player);
+
+            if (!ValidateMove(x, y, player.Input, player.PlayerID))
             {
-                bool turnSuccess = false;
-                bool withinGrid = false;
-                bool xCheckType = false;
-                bool yCheckType = false;
-                bool pieceCheckType = false;
-
-                int x = -1;
-                int y = -1;
-                int piece = -1;
-
-                while (!withinGrid || !xCheckType)
-                {
-                    Write("Enter the row of your move:");
-                    player.GetMove();
-                    xCheckType = int.TryParse(player.Input, out x);
-
-                    if (!xCheckType)
-                    {
-                        WriteLine("That was not an integer. Please try again.");
-                        continue;
-                    }
-
-                    if (x > WIDTH_OF_GAMEBOARD || x < 1)
-                    {
-                        WriteLine("That is outside of the board. Please try again.");
-                        continue;
-                    }
-                    x -= 1;
-                    withinGrid = true;
-                }
-
-                withinGrid = false;
-                while (!withinGrid || !yCheckType)
-                {
-                    Write("Enter the column of your move:");
-                    player.GetMove();
-                    yCheckType = int.TryParse(player.Input, out y);
-
-                    if (!yCheckType)
-                    {
-                        WriteLine("That was not an integer. Please try again.");
-                        continue;
-                    }
-
-                    if (y > HEIGHT_OF_GAMEBOARD || y < 1)
-                    {
-                        WriteLine("That is outside of the board. Please try again.");
-                        continue;
-                    }
-                    y -= 1;
-                    withinGrid = true;
-                }
-
-
-                while (!pieceCheckType)
-                {
-                    Write("Enter the number you wish to place:");
-                    player.GetMove();
-                    pieceCheckType = int.TryParse(player.Input, out piece);
-                    if (!pieceCheckType)
-                    {
-                        WriteLine("That was not a number. Please try again.");
-                        continue;
-                    }
-                }
-
-                if (!ValidateMove(x, y, player.Input, player.PlayerID))
-                {
-                    WriteLine("\nThat was not a valid move. Either:\n" +
-                        "- that move has been used, or\n" +
-                        "- you cannot use that piece, or\n" +
-                        "- that cell on the gameboard is taken.\n" +
-                        "Please try again.\n");
-                    return turnSuccess;
-                }
-                else
-                {
-                    gameboard.PlacePiece(x, y, player.Input);
-                    SaveMove(piece.ToString());
-                    ClearRedoList();
-                    return turnSuccess = true;
-                }
+                WriteLine("\nThat was not a valid move. Either:\n" +
+                    "- that move has been used, or\n" +
+                    "- you cannot use that piece, or\n" +
+                    "- that cell on the gameboard is taken.\n" +
+                    "Please try again.\n");
+                return turnSuccess;
             }
+            gameboard.PlacePiece(x, y, player.Input);
+            SaveMove(player.Input);
+            ClearRedoList();
+            return turnSuccess = true;
         }
 
         /// <summary>
@@ -315,37 +325,35 @@ namespace Tic_Tac_Toe_Assignment
             if (moveCounter == 0)
             {
                 WriteLine("No moves have been made, cannot undo!");
+                return;
+            }
+            if (GamePlayerMode == "Computer")
+            {
+                for (int z = 0; z < 2; z++)
+                {
+                    moveCounter--;
+                    boardRedo[undoCounter] = new Gameboard(gameboard.Board); // Saves board to redo stack
+                    pieceRedo[undoCounter] = pieceHistory[moveCounter]; // Saves piece to redo stack
+                    undoCounter++;
+
+                    gameboard = new Gameboard(BoardHistory[moveCounter].Board); //restore previous board
+                    for (int i = 0; i < NTTpieces.Length; i++)
+                    {
+                        if (NTTpieces[i] == "0")
+                        {
+                            NTTpieces[i] = pieceHistory[moveCounter];
+                            break;
+                        }
+                    }
+                    logger.SaveToFile(gameboard, CurrentPlayer.PlayerID);
+                    CurrentPlayerIndex--;
+                    if (CurrentPlayerIndex < 0)
+                        CurrentPlayerIndex = PlayerList.Length - 1; //decrement player
+                }
+                WriteLine("Your move was successfully undone.");
             }
             else
-            {
-                if (GamePlayerMode == "Computer")
-                {
-                    for (int z = 0; z < 2; z++)
-                    {
-                        moveCounter--;
-                        boardRedo[undoCounter] = new Gameboard(gameboard.Board); // Saves board to redo stack
-                        pieceRedo[undoCounter] = pieceHistory[moveCounter]; // Saves piece to redo stack
-                        undoCounter++;
-
-                        gameboard = new Gameboard(BoardHistory[moveCounter].Board); //restore previous board
-                        for (int i = 0; i < NTTpieces.Length; i++)
-                        {
-                            if (NTTpieces[i] == "0")
-                            {
-                                NTTpieces[i] = pieceHistory[moveCounter];
-                                break;
-                            }
-                        }
-                        logger.SaveToFile(gameboard, CurrentPlayer.PlayerID);
-                        CurrentPlayerIndex--;
-                        if (CurrentPlayerIndex < 0)
-                            CurrentPlayerIndex = PlayerList.Length - 1; //decrement player
-                    }
-                    WriteLine("Your move was successfully undone.");
-                }
-                else
-                    WriteLine("Undo is not available for player versus player mode.");
-            }
+                WriteLine("Undo is not available for player versus player mode.");
         }
         /// <summary>
         /// Redoes a previously undone move
@@ -358,19 +366,21 @@ namespace Tic_Tac_Toe_Assignment
             }
             else
             {
-                undoCounter--;
-                gameboard = new Gameboard(boardRedo[undoCounter].Board);
-                for (int i = 0; i < NTTpieces.Length; i++)
+                for (int z = 0; z < 2; z++)
                 {
-                    if (NTTpieces[i] == pieceRedo[undoCounter])
+                    undoCounter--;
+                    gameboard = new Gameboard(boardRedo[undoCounter].Board);
+                    for (int i = 0; i < NTTpieces.Length; i++)
                     {
-                        NTTpieces[i] = "0";
-                        break;
+                        if (NTTpieces[i] == pieceRedo[undoCounter])
+                        {
+                            NTTpieces[i] = "0";
+                            break;
+                        }
                     }
+                    logger.SaveToFile(gameboard, CurrentPlayer.PlayerID);
+                    SaveMove(pieceRedo[undoCounter]);
                 }
-                logger.SaveToFile(gameboard, CurrentPlayer.PlayerID);
-                CurrentPlayerIndex = (CurrentPlayerIndex + 1) % PlayerList.Length; //increment player
-                SaveMove(pieceRedo[undoCounter]);
             }
         }
 

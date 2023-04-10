@@ -17,7 +17,6 @@ namespace Tic_Tac_Toe_Assignment
             "Your input:";
         private static string AVAILABLE_COMMANDS = "\nThese are your possible moves.\n" +
                         "When it is your turn, you can enter:\n" +
-                        "- 'save' to save the current game\n" +
                         "- 'undo' to undo both your and your opponent's previous move\n" +
                         "- 'redo' to redo a move you previously undid\n" +
                         "- 'place' to make a move\n" +
