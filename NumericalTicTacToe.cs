@@ -25,6 +25,7 @@ namespace Tic_Tac_Toe_Assignment
         {
             get; set;
         }
+
         internal override string GamePlayerMode
         {
             get; set;

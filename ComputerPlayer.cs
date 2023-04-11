@@ -14,10 +14,6 @@ namespace Tic_Tac_Toe_Assignment
         private Game computerGame;
 
         //properties
-        internal override string Input //will not use this but is mandatory anyway
-        {
-            get; set;
-        }
         //methods
         /// <summary>
         /// Generates a random move and places it onto the gameboard

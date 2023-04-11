@@ -11,7 +11,7 @@ namespace Tic_Tac_Toe_Assignment
     {
         //fields
         //properties
-        internal abstract string Input
+        internal virtual string Input
         {
             get; set;
         }

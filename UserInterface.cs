@@ -86,10 +86,9 @@ namespace Tic_Tac_Toe_Assignment
         /// Returns the state of the gameboard
         /// </summary>
         /// <returns></returns>
-        private string UpdateScreen()
+        private void UpdateScreen()
         {
             WriteLine(currentGame.gameboard);
-            return currentGame.gameboard.ToString();
         }
 
         /// <summary>
@@ -182,12 +181,7 @@ namespace Tic_Tac_Toe_Assignment
                 }
                 else
                 {
-                    if (request == HELP)
-                    {
-                        //call help system
-                        validPick = true; //TODO
-                    }
-                    else if (request == QUIT)
+                    if (request == QUIT)
                     {
                         WriteLine("Goodbye!");
                         Environment.Exit(0);
@@ -240,12 +234,7 @@ namespace Tic_Tac_Toe_Assignment
                 }
                 else
                 {
-                    if (Request == HELP)
-                    {
-                        //call help system
-                        validPick = true; //TODO
-                    }
-                    else if (Request == QUIT)
+                    if (Request == QUIT)
                     {
                         WriteLine("Goodbye!");
                         Environment.Exit(0);
@@ -296,6 +285,6 @@ namespace Tic_Tac_Toe_Assignment
                 }
             }
         }
-        //constructor - currently using default constructor
+        //constructor
     }
 }
